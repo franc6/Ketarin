@@ -5,6 +5,7 @@
  * Date: 9/10/2006 11:15 AM
  *
  * Change log:
+ * 2018-10-04  TJF  - Modifications for MONO builds
  * 2008-07-23  JPP  - Consistently use copy-on-write semantics with Add/RemoveObject methods
  * 2008-07-10  JPP  - Enable validation on cell editors through a CellEditValidating event.
  *                    (thanks to Artiom Chilaru for the initial suggestion and implementation).
@@ -982,11 +983,7 @@ namespace CDBurnerXP.Controls
         {
             get
             {
-#if MONO
-                return false;
-#else
                 return showImagesOnSubItems;
-#endif
             }
             set { showImagesOnSubItems = value; }
         }
@@ -1604,7 +1601,18 @@ namespace CDBurnerXP.Controls
             int previousTopIndex = this.TopItemIndex;
 
             this.Freeze();
+#if MONO
+            // Calling this.Clear() will cause re-layout, which on Mono might
+            // throw InvalidOperationException.  This is perfectly fine here,
+            // so just catch it and continue.  The layout code will get called
+            // again anyway.
+            try {
+#endif
             this.Clear();
+#if MONO
+            }
+            catch (InvalidOperationException){}
+#endif
             List<OLVColumn> cols = this.GetFilteredColumns(view);
             this.Columns.AddRange(cols.ToArray());
             if (view == View.Details) {
@@ -1879,6 +1887,7 @@ namespace CDBurnerXP.Controls
 
         #endregion
 
+#if !MONO
         #region Low level Windows message handling
 
         /// <summary>
@@ -1917,7 +1926,9 @@ namespace CDBurnerXP.Controls
         }
 
         #endregion
+#endif
 
+#if !MONO
         #region Empty List Msg handling
 
         /// <summary>
@@ -1990,8 +2001,10 @@ namespace CDBurnerXP.Controls
         }
 
         #endregion
+#endif
 
         #region Column header clicking, column hiding and resizing
+#if !MONO
 
         /// <summary>
         /// When the control is created capture the messages for the header.
@@ -1999,11 +2012,9 @@ namespace CDBurnerXP.Controls
         protected override void OnCreateControl()
         {
             base.OnCreateControl();
-#if !MONO
             hdrCtrl = new HeaderControl(this);
-#endif
         }
-#if !MONO
+
         private HeaderControl hdrCtrl = null;
 
         /// <summary>
@@ -2078,7 +2089,7 @@ namespace CDBurnerXP.Controls
                 return NativeMethods.GetColumnUnderPoint(this.Handle, pt);
             }
         }
-#endif
+
         /// <summary>
         /// The user wants to see the context menu.
         /// </summary>
@@ -2337,6 +2348,7 @@ namespace CDBurnerXP.Controls
             // what the real DisplayIndex's are.
             this.BeginInvoke(new MethodInvoker(this.RememberDisplayIndicies));
         }
+#endif
 
         private void RememberDisplayIndicies()
         {
@@ -2607,7 +2619,12 @@ namespace CDBurnerXP.Controls
         /// </summary>
         public void SelectAll()
         {
+#if !MONO
             NativeMethods.SelectAllItems(this);
+#else
+            foreach (ListViewItem item in this.Items)
+                item.Selected = true;
+#endif
         }
 
         /// <summary>
@@ -2615,7 +2632,12 @@ namespace CDBurnerXP.Controls
         /// </summary>
         public void DeselectAll()
         {
+#if !MONO
             NativeMethods.DeselectAllItems(this);
+#else
+            foreach (ListViewItem item in this.Items)
+                item.Selected = false;
+#endif
         }
 
         /// <summary>
@@ -2949,6 +2971,7 @@ namespace CDBurnerXP.Controls
         /// <param name="sortOrder">The sort order in effect on that column</param>
         protected void ShowSortIndicator(OLVColumn columnToSort, SortOrder sortOrder)
         {
+#if !MONO
             int imageIndex = -1;
 
             if (!NativeMethods.HasBuiltinSortIndicators()) {
@@ -2970,6 +2993,7 @@ namespace CDBurnerXP.Controls
                 else
                     NativeMethods.SetColumnImage(this, i, SortOrder.None, -1);
             }
+#endif
         }
 
         /// <summary>
@@ -3181,7 +3205,9 @@ namespace CDBurnerXP.Controls
         /// since they seem to erase this setting.</remarks>
         protected void ForceSubItemImagesExStyle()
         {
+#if !MONO
             NativeMethods.ForceSubItemImagesExStyle(this);
+#endif
         }
 
         /// <summary>
@@ -3192,7 +3218,9 @@ namespace CDBurnerXP.Controls
         /// <param name="imageIndex">index into the image list</param>
         protected void SetSubItemImage(int itemIndex, int subItemIndex, int imageIndex)
         {
+#if !MONO
             NativeMethods.SetSubItemImage(this, itemIndex, subItemIndex, imageIndex);
+#endif
         }
 
         #endregion
@@ -4284,10 +4312,13 @@ namespace CDBurnerXP.Controls
         }
         private SortOrder lastSortOrder;
 
+#if !MONO
         private Rectangle lastUpdateRectangle; // remember the update rect from the last WM_PAINT msg
+#endif
         private bool isOwnerOfObjects; // does this ObjectListView own the Objects collection?
     }
 
+#if !MONO
     /// <summary>
     /// Wrapper for all native method calls on ListView controls
     /// </summary>
@@ -4678,6 +4709,7 @@ namespace CDBurnerXP.Controls
                 return -1;
         }
     }
+#endif
 
     /// <summary>
     /// A virtual object list view operates in virtual mode, that is, it only gets model objects for
