@@ -490,9 +490,13 @@ namespace Ketarin
                             return string.Empty;
                         }
 
+#if MONO
+                        return string.Empty;
+#else
                         PowerShellScript psScript = new PowerShellScript(content);
                         psScript.Execute(context);
                         return psScript.LastOutput;
+#endif
                     }
                     catch
                     {

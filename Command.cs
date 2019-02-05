@@ -47,11 +47,15 @@ namespace Ketarin
                     UserCSScript script = new UserCSScript(this.Text);
                     script.Execute(application);
                     break;
-
+#if MONO
+                case ScriptType.PowerShell:
+                    break;
+#else
                 case ScriptType.PowerShell:
                     PowerShellScript psScript = new PowerShellScript(this.Text);
                     psScript.Execute(application, errorInfo);
                     return Conversion.ToInt(psScript.LastOutput);
+#endif
 
                 default:
                     return ExecuteBatchCommand(application, this.Text, targetFileName);
