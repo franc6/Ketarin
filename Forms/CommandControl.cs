@@ -118,6 +118,7 @@ namespace Ketarin.Forms
                     }
                 }
 
+#if !MONO
                 // Add necessary menu items
                 if (this.VariableNames != null && this.VariableNames.Length > 0)
                 {
@@ -135,6 +136,7 @@ namespace Ketarin.Forms
                         cmnuCommand.MenuItems.Add(0, varItem);
                     }
                 }
+#endif
             }
         }
 
@@ -181,6 +183,7 @@ namespace Ketarin.Forms
             {
                 switch (value)
                 {
+#if !MONO
                     case ScriptType.PowerShell:
                         mnuBatchScript.Checked = false;
                         mnuCSScript.Checked = false;
@@ -192,13 +195,16 @@ namespace Ketarin.Forms
                             txtCode.Text = psSample;
                         }
                         break;
+#endif
 
                     case ScriptType.CS:
                         mnuBatchScript.Checked = false;
                         mnuCSScript.Checked = true;
                         mnuValidate.Enabled = true;
                         mnuPowerShell.Checked = false;
+#if !MONO
                         txtCode.LexerLanguage = "cs";
+#endif
                         if (string.IsNullOrEmpty(txtCode.Text))
                         {
                             txtCode.Text = csSample;
@@ -210,7 +216,9 @@ namespace Ketarin.Forms
                         mnuCSScript.Checked = false;
                         mnuValidate.Enabled = false;
                         mnuPowerShell.Checked = false;
+#if !MONO
                         txtCode.LexerLanguage = "batch";
+#endif
 
                         if (txtCode.Text == csSample)
                         {
@@ -317,15 +325,18 @@ namespace Ketarin.Forms
                 CompilerErrorCollection errors;
                 testInstruction.Compile(out errors);
 
+#if !MONO
                 txtCode.AnnotationClearAll();
                 txtCode.AnnotationVisible = ScintillaNET.Annotation.Boxed;
                 txtCode.Styles[1].BackColor = Color.FromArgb(0xFFF0F0);
                 txtCode.Styles[1].ForeColor = Color.FromArgb(0x800000);
                 txtCode.Styles[2].BackColor = Color.FromArgb(0xFFFFF0);
                 txtCode.Styles[2].ForeColor = Color.FromArgb(0x808000);
+#endif
 
                 if (errors.HasErrors)
                 {
+#if !MONO
                     bool hasScrolled = false;
 
                     foreach (CompilerError error in errors)
@@ -344,6 +355,7 @@ namespace Ketarin.Forms
                             txtCode.Lines[lineNum].AnnotationStyle = 2;
                         }
                     }
+#endif
                 }
                 else
                 {
@@ -457,7 +469,11 @@ namespace Ketarin.Forms
             Snippet snippet = ((MenuItem)sender).Tag as Snippet;
             if (snippet != null)
             {
+#if MONO
+                txtCode.Text += snippet.Text;
+#else
                 txtCode.InsertText(txtCode.CurrentPosition, snippet.Text);
+#endif
             }
         }
 
@@ -492,7 +508,11 @@ namespace Ketarin.Forms
             mnuCut.Visible = isEditControl;
             mnuCopy.Visible = isEditControl;
             mnuPaste.Visible = isEditControl;
+#if MONO
+            mnuPaste.Enabled = true;
+#else
             mnuPaste.Enabled = txtCode.CanPaste;
+#endif
             mnuRedo.Visible = isEditControl;
             mnuRedo.Enabled = txtCode.CanRedo;
             mnuUndo.Visible = isEditControl;

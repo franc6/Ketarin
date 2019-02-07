@@ -2,7 +2,9 @@
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+#if !MONO
 using ScintillaNET;
+#endif
 using wyDay.Controls;
 
 namespace Ketarin.Forms
@@ -59,7 +61,11 @@ namespace Ketarin.Forms
             this.mnuSelectAll = new System.Windows.Forms.MenuItem();
             this.txtBorder = new System.Windows.Forms.TextBox();
             this.bCommand = new wyDay.Controls.SplitButton();
+#if MONO
+            this.txtCode = new System.Windows.Forms.RichTextBox();
+#else
             this.txtCode = new Scintilla();
+#endif
             this.mnuPowerShell = new System.Windows.Forms.MenuItem();
             this.SuspendLayout();
             // 
@@ -238,7 +244,9 @@ namespace Ketarin.Forms
                         | AnchorStyles.Right)));
             this.txtCode.Location = new Point(1, 1);
             this.txtCode.Name = "txtCode";
+#if !MONO
             this.txtCode.Margins[0].Width = 17;
+#endif
             this.txtCode.Size = new Size(514, 192);
             this.txtCode.TabIndex = 0;
             // 
@@ -289,7 +297,11 @@ namespace Ketarin.Forms
         private MenuItem mnuNewScript;
         private MenuItem sepSaveAs;
         private MenuItem mnuDeleteSnippet;
+#if MONO
+        private RichTextBox txtCode;
+#else
         private Scintilla txtCode;
+#endif
         private MenuItem sepDefaultCommands;
         private MenuItem mnuUndo;
         private MenuItem mnuRedo;
