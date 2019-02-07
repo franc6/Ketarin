@@ -139,9 +139,11 @@ namespace Ketarin.Forms
         {
             base.OnLoad(e);
 
+#if !MONO
             // Turn off auto word selection (workaround .NET bug).
             this.rtfContent.AutoWordSelection = true;
             this.rtfContent.AutoWordSelection = false;
+#endif
 
             this.ReloadVariables(true);
 
@@ -211,12 +213,14 @@ namespace Ketarin.Forms
                 // Uodate controls which belong to the variable
                 using (new ControlRedrawLock(this))
                 {
+#if !MONO
                     // Set the auto complete of the URL text box
                     this.txtUrl.AutoCompleteMode = AutoCompleteMode.Suggest;
                     this.txtUrl.AutoCompleteSource = AutoCompleteSource.CustomSource;
                     AutoCompleteStringCollection urls = new AutoCompleteStringCollection();
                     urls.AddRange(DbManager.GetVariableUrls());
                     this.txtUrl.AutoCompleteCustomSource = urls;
+#endif
 
                     // Set remaining controls
                     this.txtUrl.Text = this.CurrentVariable.Url;
@@ -562,7 +566,9 @@ namespace Ketarin.Forms
                 this.rtfContent.SelectionLength = this.rtfContent.Text.Length;
                 this.rtfContent.SelectionColor = SystemColors.WindowText;
                 this.rtfContent.SelectionFont = this.rtfContent.Font;
+#if !MONO
                 this.rtfContent.SelectionBackColor = SystemColors.Window;
+#endif
                 this.rtfContent.SelectionLength = 0;
 
                 if (match != null)
@@ -570,16 +576,24 @@ namespace Ketarin.Forms
                     this.m_MatchPosition = match.Index;
                     this.rtfContent.SelectionStart = match.Index;
                     this.rtfContent.SelectionLength = match.Length;
+#if MONO
+                    this.rtfContent.SelectionColor = Color.Blue;
+#else
                     this.rtfContent.SelectionColor = Color.White;
                     this.rtfContent.SelectionBackColor = Color.Blue;
+#endif
 
                     if (match.Groups.Count > 1)
                     {
                         this.m_MatchPosition = match.Groups[1].Index;
                         this.rtfContent.SelectionStart = match.Groups[1].Index;
                         this.rtfContent.SelectionLength = match.Groups[1].Length;
+#if MONO
+                        this.rtfContent.SelectionColor = Color.Red;
+#else
                         this.rtfContent.SelectionColor = Color.White;
                         this.rtfContent.SelectionBackColor = Color.Red;
+#endif
                     }
 
                     this.MatchSelection = this.rtfContent.SelectedText;
@@ -597,8 +611,12 @@ namespace Ketarin.Forms
                     {
                         this.rtfContent.SelectionStart = pos;
                         this.rtfContent.SelectionLength = this.CurrentVariable.StartText.Length;
+#if MONO
+                        this.rtfContent.SelectionColor = Color.Blue;
+#else
                         this.rtfContent.SelectionColor = Color.White;
                         this.rtfContent.SelectionBackColor = Color.Blue;
+#endif
                     }
 
                     int matchStart = pos + this.CurrentVariable.StartText.Length;
@@ -612,15 +630,23 @@ namespace Ketarin.Forms
                             this.m_MatchPosition = pos;
                             this.rtfContent.SelectionStart = pos;
                             this.rtfContent.SelectionLength = this.CurrentVariable.EndText.Length;
+#if MONO
+                            this.rtfContent.SelectionColor = Color.Blue;
+#else
                             this.rtfContent.SelectionColor = Color.White;
                             this.rtfContent.SelectionBackColor = Color.Blue;
+#endif
 
                             // Highlight match with red background
                             this.rtfContent.SelectionStart = matchStart;
                             this.rtfContent.SelectionLength = pos - matchStart;
                             this.MatchSelection = this.rtfContent.SelectedText;
+#if MONO
+                            this.rtfContent.SelectionColor = Color.Red;
+#else
                             this.rtfContent.SelectionColor = Color.White;
                             this.rtfContent.SelectionBackColor = Color.Red;
+#endif
                             this.rtfContent.SelectionLength = 0;
                         }
                     }
