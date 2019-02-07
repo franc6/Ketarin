@@ -52,6 +52,26 @@ namespace Microsoft.Win32
         /// <returns>System.Drawing.Icon</returns>
         public static System.Drawing.Icon GetFileIcon(string name, IconSize size, bool linkOverlay)
         {
+#if MONO
+            /*
+            int width = 32;
+            int height = 32;
+            if (size == IconSize.Small)
+            {
+                width = 16;
+                height = 16;
+            }
+            System.IO.Stream stream = System.IO.File.OpenRead(name);
+	    // Note this doesn't actually work, unless the file pointed to by
+	    // name is an icon file, which it's not for the purposes of this
+            // program.  At the point of this comment, code could be added to
+            // limit stream to just the section of the PE executable that
+            // contains the first icon.  If that's done, then this will work as
+            // expected.
+            System.Drawing.Icon icon = new System.Drawing.Icon(stream, width, height);
+            */
+            System.Drawing.Icon icon = System.Drawing.Icon.ExtractAssociatedIcon(name);
+#else
             Shell32.SHFILEINFO shfi = new Shell32.SHFILEINFO();
             int flags = Shell32.SHGFI_ICON | Shell32.SHGFI_USEFILEATTRIBUTES;
 
@@ -77,9 +97,11 @@ namespace Microsoft.Win32
             System.Drawing.Icon icon = (System.Drawing.Icon)System.Drawing.Icon.FromHandle(shfi.hIcon).Clone();
             User32.DestroyIcon(shfi.hIcon);
             // Cleanup
+#endif
             return icon;
         }
 
+#if !MONO
         /// <summary>
         /// Used to access system folder icons.
         /// </summary>
@@ -118,5 +140,6 @@ namespace Microsoft.Win32
             // Cleanup
             return icon;
         }
+#endif
     }
 }
