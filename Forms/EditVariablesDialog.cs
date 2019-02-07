@@ -648,8 +648,12 @@ namespace Ketarin.Forms
                     }
                 }
 
+#if !MONO
+                // It looks like we can't really do this for Mono? Probably need to know which GUI toolkit is used
+                // and use native code for it, too!
                 // Restore scroll position
                 User32.SendMessage(this.rtfContent.Handle, User32.EM_SETSCROLLPOS, IntPtr.Zero, ref scrollPos);
+#endif
             }
         }
 
