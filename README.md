@@ -1,3 +1,7 @@
+This project provides modifications to Ketarin for running on Linux systems,
+under Mono.  Build the "Mono - Debug" or "Mono - Release" targets.  The "Debug"
+and "Release" targets are for running under the Windows .NET runtime.
+
 # Ketarin 
 
 Ketarin is a small application which automatically updates setup packages. As opposed to other tools, Ketarin is not meant to keep your system up-to-date, but rather to maintain a compilation of all important setup packages which can then be burned to disc or put on a USB stick.
