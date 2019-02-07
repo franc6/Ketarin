@@ -666,7 +666,7 @@ namespace Ketarin
             {
                 if (string.IsNullOrEmpty(this.TargetPath)) return false;
 
-                return this.TargetPath.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.CurrentCulture)
+                return this.TargetPath.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.CurrentCulture);
             }
         }
 
@@ -698,7 +698,7 @@ namespace Ketarin
         public string TargetPath {
 	    get { return m_TargetPath; }
 	    set { m_targetPath = Path.FixDirectorySeparator(value); }
-       	};
+       	}
 
         [XmlElement("FixedDownloadUrl")]
         public string FixedDownloadUrl { get; set; } = string.Empty;
