@@ -159,7 +159,7 @@ namespace Ketarin.Forms
             this.lblImagesExcluded.Name = "lblImagesExcluded";
             this.lblImagesExcluded.Size = new System.Drawing.Size(260, 32);
             this.lblImagesExcluded.TabIndex = 5;
-            this.lblImagesExcluded.Text = "This excludes the used icons, which are copyrighted by  VirtualLNK, LLC.";
+            this.lblImagesExcluded.Text = "The \"Document\" and \"Document Restricted\" icons are under a public domain license.";
             // 
             // lblWebsite
             // 

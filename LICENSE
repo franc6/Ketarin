@@ -1,7 +1,29 @@
+New text, not ready yet:
+
+Ketarin is licensed under the GNU GPL version 2.
+
+Portions of Ketarin (including several image files) are copyright 2018, Tom
+Francis, and licensed under the terms of the GNU GPL version 2 or later.
+
+The file Icon-source/text-x-generic-template.svg was created by Jakub Steiner
+and was released under a public domain license.  It was obtained as part of the
+Tango Icon Library (http://tango.freedesktop.org/Tango_Icon_Library).  More
+information about the license and its creator is contained within the file.
+
+The files Resources/Document.png, Resources/Document Restricted.png and
+Icon-source/Document Restricted.xcf were created by Tom Francis as derivative
+works of Icon-source/text-x-generic-generic-template.svg, and are released
+under the same public domain license.  See
+http://creativecommons.org/licenses/publicdomain/ for more information on the
+terms of the license.
+
+Old, obsolete text:
+----Cut here----
 For all source files that do not state otherwise, the following license applies.
 
 Images in the "Resources" folder are copyrighted by
 VirtualLNK, LLC (http://www.virtuallnk.com/software-icons.aspx) and may not be redistributed.
+----Cut here----
 
                     
                     GNU GENERAL PUBLIC LICENSE
