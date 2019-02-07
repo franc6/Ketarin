@@ -130,6 +130,7 @@ namespace Ketarin.Forms
             // Prevent flicker and the like
             using (new ControlRedrawLock(parent.Parent))
             {
+		parent.Controls.Clear();
                 parent.Controls.AddRange(oldControls);
 
                 // Brute force scrollbar update
