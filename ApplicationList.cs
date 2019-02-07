@@ -137,7 +137,13 @@ namespace Ketarin
 
             if (iconPaths.Count == 0)
             {
-                return Resources.Setup32;
+                // This icon is actually belongs to MS, and it cannot be used
+                // here like this.  On Windows, we could use Shell32 to display
+                // the appropriate icon, but since this project isn't intended
+                // for use on Windows, we'll just return the system application
+                // icon instead.
+                // return Resources.Setup32;
+                return SystemIcons.Application.ToBitmap();
             }
             else
             {
