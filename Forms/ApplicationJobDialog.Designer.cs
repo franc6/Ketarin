@@ -96,7 +96,9 @@ namespace Ketarin.Forms
             this.bAddInstruction = new wyDay.Controls.SplitButton();
             this.cmnuAddInstruction = new System.Windows.Forms.ContextMenu();
             this.mnuStartProcess = new System.Windows.Forms.MenuItem();
+#if !MONO
             this.mnuCloseProcess = new System.Windows.Forms.MenuItem();
+#endif
             this.mnuCopyFile = new System.Windows.Forms.MenuItem();
             this.mnuCustomCommand = new System.Windows.Forms.MenuItem();
             this.label1 = new System.Windows.Forms.Label();
@@ -815,31 +817,36 @@ namespace Ketarin.Forms
             // 
             this.cmnuAddInstruction.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.mnuStartProcess,
+#if !MONO
             this.mnuCloseProcess,
+#endif
             this.mnuCopyFile,
             this.mnuCustomCommand});
             // 
             // mnuStartProcess
             // 
-            this.mnuStartProcess.Index = 0;
+            int index = 0;
+            this.mnuStartProcess.Index = index++;
             this.mnuStartProcess.Text = "&Start process...";
             this.mnuStartProcess.Click += new System.EventHandler(this.mnuStartProcess_Click);
+#if !MONO
             // 
             // mnuCloseProcess
             // 
-            this.mnuCloseProcess.Index = 1;
+            this.mnuCloseProcess.Index = index++;
             this.mnuCloseProcess.Text = "Cl&ose process...";
             this.mnuCloseProcess.Click += new System.EventHandler(this.mnuCloseProcess_Click);
+#endif
             // 
             // mnuCopyFile
             // 
-            this.mnuCopyFile.Index = 2;
+            this.mnuCopyFile.Index = index++;
             this.mnuCopyFile.Text = "&Copy file...";
             this.mnuCopyFile.Click += new System.EventHandler(this.mnuCopyFile_Click);
             // 
             // mnuCustomCommand
             // 
-            this.mnuCustomCommand.Index = 3;
+            this.mnuCustomCommand.Index = index++;
             this.mnuCustomCommand.Text = "C&ustom command...";
             this.mnuCustomCommand.Click += new System.EventHandler(this.mnuCustomCommand_Click);
             // 
@@ -985,7 +992,9 @@ namespace Ketarin.Forms
         private Label lblUserAgent;
         private CommandControl txtExecuteBefore;
         private CommandControl txtExecuteAfter;
+#if !MONO
         private MenuItem mnuCloseProcess;
+#endif
         private CheckBox chkEnabled;
         private Label lblHashVariable;
         private ComboBox cboHashType;

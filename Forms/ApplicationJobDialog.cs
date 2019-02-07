@@ -601,6 +601,7 @@ namespace Ketarin.Forms
             }
         }
 
+#if !MONO
         private void mnuCloseProcess_Click(object sender, EventArgs e)
         {
             CloseProcessInstruction instruction = new CloseProcessInstruction();
@@ -614,6 +615,7 @@ namespace Ketarin.Forms
                 this.instructionsListBox.Panels.Add(panel);
             }
         }
+#endif
 
         #endregion
     }

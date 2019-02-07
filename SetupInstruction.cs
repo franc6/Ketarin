@@ -7,7 +7,13 @@ using System.Xml.Serialization;
 
 namespace Ketarin
 {
-    [Serializable(), XmlInclude(typeof(CustomSetupInstruction)), XmlInclude(typeof(StartProcessInstruction)), XmlInclude(typeof(CopyFileInstruction)), XmlInclude(typeof(CloseProcessInstruction))]
+    [Serializable(), XmlInclude(typeof(CustomSetupInstruction))
+        , XmlInclude(typeof(StartProcessInstruction))
+        , XmlInclude(typeof(CopyFileInstruction))
+#if !MONO
+        , XmlInclude(typeof(CloseProcessInstruction))
+#endif
+    ]
     public class SetupInstruction : ICloneable
     {
         /// <summary>

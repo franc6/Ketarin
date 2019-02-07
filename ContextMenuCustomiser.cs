@@ -7,6 +7,38 @@ using Microsoft.Win32;
 
 namespace Ketarin.Forms
 {
+#if MONO
+    public class ContextMenuCustomiser
+    {
+        private static short m_LastId = 111;
+        private readonly List<ContextMenuItem> m_Items = new List<ContextMenuItem>();
+
+        public List<ContextMenuItem> MenuItems
+        {
+            get
+            {
+                return m_Items;
+            }
+        }
+
+        public ContextMenuCustomiser(Control control)
+        {
+        }
+
+        public ContextMenuCustomiser(Control control, ContextMenuItem[] items)
+        {
+        }
+
+        /// <summary>
+        /// Determines a free ID which can be used for a new context menu item.
+        /// </summary>
+        internal static short GetNextId()
+        {
+            return ++m_LastId;
+        }
+    }
+#else
+
     /// <summary>
     /// Allows adding custom items to exiting native Win32 context menus.
     /// </summary>
@@ -168,4 +200,5 @@ namespace Ketarin.Forms
             base.WndProc(ref m);
         }
     }
+#endif
 }
