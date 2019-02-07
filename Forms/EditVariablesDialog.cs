@@ -569,9 +569,13 @@ namespace Ketarin.Forms
 
             using (new ControlRedrawLock(this))
             {
-                // Determine scroll position
+#if !MONO
+                // It looks like we can't really do this for Mono? Probably need to know which GUI toolkit is used
+                // and use native code for it, too!
+                // Determine scroll position, to restore it later
                 User32.POINT scrollPos = new User32.POINT();
                 User32.SendMessage(this.rtfContent.Handle, User32.EM_GETSCROLLPOS, IntPtr.Zero, ref scrollPos);
+#endif
 
                 // Reset text area
                 this.MatchSelection = string.Empty;

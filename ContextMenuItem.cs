@@ -107,6 +107,7 @@ namespace Ketarin.Forms
             m_Id = ContextMenuCustomiser.GetNextId();
         }
 
+#if !MONO
         /// <summary>
         /// Inserts this menu item and all sub items into the given menu.
         /// </summary>
@@ -136,5 +137,6 @@ namespace Ketarin.Forms
                 }                
             }
         }
+#endif
     }
 }

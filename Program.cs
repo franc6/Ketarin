@@ -30,7 +30,9 @@ namespace Ketarin
 {
     internal static class Program
     {
+#if !MONO
         private static NotifyIcon m_Icon;
+#endif
 
         [STAThread]
         private static void Main(string[] args)
@@ -74,6 +76,7 @@ namespace Ketarin
             // Do not try using SSL3 by default since some websites make SSL3 requests fail.
             ServicePointManager.SecurityProtocol = Updater.DefaultHttpProtocols;
 
+#if !MONO
             // Either run silently on command line...
             if (arguments["silent"] != null)
             {
@@ -119,7 +122,9 @@ namespace Ketarin
                 Kernel32.FreeConsole();
             }
             // ...perform database operations...
-            else if (arguments["update"] != null && arguments["appguid"] != null)
+            else
+#endif
+	       	if (arguments["update"] != null && arguments["appguid"] != null)
             {
                 // Update properties of an application in the database
                 ApplicationJob job = DbManager.GetJob(new Guid(arguments["appguid"]));
@@ -256,10 +261,12 @@ namespace Ketarin
 
             Console.WriteLine(status);
 
+#if !MONO
             if (m_Icon != null)
             {
                 m_Icon.ShowBalloonTip(2000, "Ketarin", status, (e.NewStatus == Updater.Status.Failure ? ToolTipIcon.Error : ToolTipIcon.Info));
             }
+#endif
         }
 
         #endregion
