@@ -127,7 +127,7 @@ namespace CDBurnerXP.IO
         {
             try
             {
-                if (sourcePath.StartsWith("\\\\")) return true;
+                if (sourcePath.StartsWith("\\\\", StringComparison.Ordinal)) return true;
                 DriveInfo info = new DriveInfo(Path.GetPathRoot(sourcePath));
                 return (info.DriveType == DriveType.Network);
             }
@@ -191,12 +191,12 @@ namespace CDBurnerXP.IO
             {
                 file = file.Replace("/", "\\");
 
-                if (file.StartsWith("\\\\"))
+                if (file.StartsWith("\\\\", StringComparison.Ordinal))
                 {
                     // UNC path
                     return file;
                 }
-                else if (file.StartsWith("\\"))
+                else if (file.StartsWith("\\", StringComparison.Ordinal))
                 {
                     // If path is rooted relatively, combine with playlist file location
                     return Path.Combine(Path.GetPathRoot(basePath), file.TrimStart('\\'));
@@ -278,7 +278,7 @@ namespace CDBurnerXP.IO
 
         public static string QualifyPath(string sPath)
         {
-            if (sPath.EndsWith("\\"))
+            if (sPath.EndsWith("\\", StringComparison.Ordinal))
             {
                 return sPath;
             }
