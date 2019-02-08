@@ -642,7 +642,15 @@
             // 
             this.bInstall.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bInstall.AutoSize = true;
-            this.bInstall.Image = global::Ketarin.Properties.Resources.Setup;
+	    // Get the file icon for ".msi" in the system directory (which file
+	    // should not exist and cannot be created through GUI tools) --
+	    // This only works because the Windows implementation of
+	    // GetFileIcon makes a call to SHGetFileInfo() instead of calling
+	    // System.Drawing.Icon.ExtractAssociatedIcon().  When the former
+	    // gets a file that doesn't exist, it returns the icon based on
+	    // file name extension associations.  The latter throws an
+	    // exception for files that don't exist.
+            this.bInstall.Image = Microsoft.Win32.IconReader.GetFileIcon(System.IO.Path.Combine(System.Environment.SystemDirectory, ".msi"), Microsoft.Win32.IconReader.IconSize.Small, false).ToBitmap();
             this.bInstall.Location = new System.Drawing.Point(290, 280);
             this.bInstall.Name = "bInstall";
             this.bInstall.Size = new System.Drawing.Size(85, 24);

@@ -68,6 +68,9 @@ namespace Microsoft.Win32
             // limit stream to just the section of the PE executable that
             // contains the first icon.  If that's done, then this will work as
             // expected.
+	    // Please note that MainForm.Designer.cs relies on the non-Mono
+	    // builds calling SHGetFileInfo() instead of
+	    // System.Drawing.Icon.ExtractAssociatedIcon()!
             System.Drawing.Icon icon = new System.Drawing.Icon(stream, width, height);
             */
             System.Drawing.Icon icon = System.Drawing.Icon.ExtractAssociatedIcon(name);
