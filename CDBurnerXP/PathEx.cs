@@ -127,7 +127,7 @@ namespace CDBurnerXP.IO
         {
             try
             {
-                if (sourcePath.StartsWith("\\\\")) return true;
+                if (sourcePath.StartsWith("\\\\", StringComparison.Ordinal)) return true;
                 DriveInfo info = new DriveInfo(Path.GetPathRoot(sourcePath));
                 return (info.DriveType == DriveType.Network);
             }
@@ -191,7 +191,7 @@ namespace CDBurnerXP.IO
             {
 		file = PathEx.FixDirectorySeparator(file);
 
-                if (file.StartsWith("\\\\"))
+                if (file.StartsWith("\\\\", StringComparison.Ordinal))
                 {
                     // UNC path
                     return file;
