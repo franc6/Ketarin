@@ -1,5 +1,5 @@
 ﻿// Ketarin - Copyright (C) 2008  Canneverbe Limited
-// The icons used within the application are *NOT* licensed under the GNU General Public License.
+// Copyright 2018-2019 Tom Francis
 
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
