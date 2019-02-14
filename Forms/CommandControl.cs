@@ -176,6 +176,10 @@ namespace Ketarin.Forms
                 {
                     return ScriptType.PowerShell;
                 }
+                else if (mnuShellScript.Checked)
+                {
+                    return ScriptType.ShellScript;
+                }
 
                 return ScriptType.Batch;
             }
@@ -188,6 +192,7 @@ namespace Ketarin.Forms
                         mnuBatchScript.Checked = false;
                         mnuCSScript.Checked = false;
                         mnuPowerShell.Checked = true;
+                        mnuShellScript.Checked = false;
                         mnuValidate.Enabled = false;
                         txtCode.LexerLanguage = "powershell";
                         if (string.IsNullOrEmpty(txtCode.Text))
@@ -202,6 +207,7 @@ namespace Ketarin.Forms
                         mnuCSScript.Checked = true;
                         mnuValidate.Enabled = true;
                         mnuPowerShell.Checked = false;
+                        mnuShellScript.Checked = false;
 #if !MONO
                         txtCode.LexerLanguage = "cs";
 #endif
@@ -211,11 +217,23 @@ namespace Ketarin.Forms
                         }
                         break;
 
+                    case ScriptType.ShellScript:
+                        mnuBatchScript.Checked = false;
+                        mnuCSScript.Checked = false;
+                        mnuValidate.Enabled = false;
+                        mnuPowerShell.Checked = false;
+                        mnuShellScript.Checked = true;
+#if !MONO
+                        txtCode.LexerLanguage = "sh";
+#endif
+                        break;
+
                     default:
                         mnuBatchScript.Checked = true;
                         mnuCSScript.Checked = false;
                         mnuValidate.Enabled = false;
                         mnuPowerShell.Checked = false;
+                        mnuShellScript.Checked = false;
 #if !MONO
                         txtCode.LexerLanguage = "batch";
 #endif
@@ -375,6 +393,11 @@ namespace Ketarin.Forms
         private void mnuPowerShell_Click(object sender, EventArgs e)
         {
             CommandType = ScriptType.PowerShell;
+        }
+
+        private void mnuShellScript_Click(object sender, EventArgs e)
+        {
+            CommandType = ScriptType.ShellScript;
         }
 
         private void mnuBatchScript_Click(object sender, EventArgs e)

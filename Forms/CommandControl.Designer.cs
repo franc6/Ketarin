@@ -67,6 +67,7 @@ namespace Ketarin.Forms
             this.txtCode = new Scintilla();
 #endif
             this.mnuPowerShell = new System.Windows.Forms.MenuItem();
+            this.mnuShellScript = new System.Windows.Forms.MenuItem();
             this.SuspendLayout();
             // 
             // cmnuCommand
@@ -75,6 +76,7 @@ namespace Ketarin.Forms
             this.mnuBatchScript,
             this.mnuCSScript,
             this.mnuPowerShell,
+            this.mnuShellScript,
             this.sepRun,
             this.mnuValidate,
             this.mnuRun,
@@ -269,6 +271,12 @@ namespace Ketarin.Forms
             this.mnuPowerShell.Text = "&PowerShell script";
             this.mnuPowerShell.Click += new System.EventHandler(this.mnuPowerShell_Click);
             // 
+            // mnuShellScript
+            // 
+            this.mnuShellScript.Index = 3;
+            this.mnuShellScript.Text = "S&hell script";
+            this.mnuShellScript.Click += new System.EventHandler(this.mnuShellScript_Click);
+            // 
             // CommandControl
             // 
             this.Controls.Add(this.txtCode);
@@ -314,5 +322,6 @@ namespace Ketarin.Forms
         private MenuItem mnuSelectAll;
         private System.Windows.Forms.TextBox txtBorder;
         private MenuItem mnuPowerShell;
+        private MenuItem mnuShellScript;
     }
 }

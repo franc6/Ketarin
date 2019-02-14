@@ -18,6 +18,11 @@
         /// <summary>
         /// PowerShell script.
         /// </summary>
-        PowerShell
+        PowerShell,
+
+        /// <summary>
+        /// SH shell script.
+        /// </summary>
+        ShellScript
     }
 }
