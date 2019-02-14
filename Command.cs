@@ -58,7 +58,7 @@ namespace Ketarin
 #endif
 
                 default:
-                    return ExecuteBatchCommand(application, this.Text, targetFileName);
+                    return ExecuteBatchCommand(application, this.Text, targetFileName, Type);
             }
 
             return 0;
@@ -68,7 +68,7 @@ namespace Ketarin
         /// Executes a given command for the given application (also resolves variables).
         /// </summary>
         /// <returns>Exit code of the command, if not run in background</returns>
-        private static int ExecuteBatchCommand(ApplicationJob job, string commandText, string targetFileName)
+        private static int ExecuteBatchCommand(ApplicationJob job, string commandText, string targetFileName, ScriptType type)
         {
             // Ignore empty commands
             if (string.IsNullOrEmpty(commandText)) return 0;
@@ -84,16 +84,32 @@ namespace Ketarin
                 commandText = UrlVariable.Replace(commandText, "root", Path.GetPathRoot(Application.StartupPath), job);
             }
             catch (ArgumentException) { }
+	    ProcessStartInfo cmdExe;
 
-            // Feed cmd.exe with our commands
-            ProcessStartInfo cmdExe = new ProcessStartInfo("cmd.exe")
-            {
-                RedirectStandardInput = true,
-                UseShellExecute = false,
-                CreateNoWindow = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
+	    if (type == ScriptType.Batch)
+	    {
+		// Feed cmd.exe with our commands
+		cmdExe = new ProcessStartInfo("cmd.exe")
+		{
+		    RedirectStandardInput = true,
+		    UseShellExecute = false,
+		    CreateNoWindow = true,
+		    RedirectStandardOutput = true,
+		    RedirectStandardError = true
+		};
+	    }
+	    else
+	    {
+		// Feed /bin/sh with our commands
+		cmdExe = new ProcessStartInfo("/bin/sh")
+		{
+		    RedirectStandardInput = true,
+		    UseShellExecute = false,
+		    CreateNoWindow = true,
+		    RedirectStandardOutput = true,
+		    RedirectStandardError = true
+		};
+	    }
 
             bool executeBackground = commandText.EndsWith("&");
             commandText = commandText.TrimEnd('&');
