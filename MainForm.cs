@@ -1146,11 +1146,28 @@ namespace Ketarin
             ExportJobs(olvJobs.SelectedObjects.OfType<ApplicationJob>());
         }
 
+        private void CheckForEmptyFileName(object sender, CancelEventArgs e)
+        {
+            FileDialog fd = (sender as FileDialog);
+            if (String.IsNullOrEmpty(Path.GetFileNameWithoutExtension(fd.FileName)))
+            {
+                /*String dir = Path.GetDirectoryName(fd.FileName);
+                if (Directory.Exists(dir))
+                {
+                    fd.SetDirectory(dir);
+                }*/
+                e.Cancel = true;
+            }
+            return;
+        }
+
         private void ExportJobs(IEnumerable<ApplicationJob> objects)
         {
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
                 dialog.Filter = "Application Definition|*.xml|Application Template|*.xml";
+                //dialog.FileOk += CheckForEmptyFileName;
+                dialog.CheckPathExists = true;
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
 
                 try
@@ -1174,6 +1191,7 @@ namespace Ketarin
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Filter = "XML file|*.xml";
+                dialog.FileOk += CheckForEmptyFileName;
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
 
                 try
