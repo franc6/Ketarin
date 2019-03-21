@@ -1146,27 +1146,29 @@ namespace Ketarin
             ExportJobs(olvJobs.SelectedObjects.OfType<ApplicationJob>());
         }
 
+#if MONO
         private void CheckForEmptyFileName(object sender, CancelEventArgs e)
         {
             FileDialog fd = (sender as FileDialog);
-            if (String.IsNullOrEmpty(Path.GetFileNameWithoutExtension(fd.FileName)))
+            String pathNoExtension = Path.GetFileNameWithoutExtension(fd.FileName);
+            if (String.IsNullOrEmpty(pathNoExtension) || Directory.Exists(Path.Combine(Path.GetDirectoryName(fd.FileName), pathNoExtension)))
             {
-                /*String dir = Path.GetDirectoryName(fd.FileName);
-                if (Directory.Exists(dir))
-                {
-                    fd.SetDirectory(dir);
-                }*/
-                e.Cancel = true;
+                DialogResult result = MessageBox.Show(this, "Are you sure you want to use a file named: " + fd.FileName, Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                    e.Cancel = true;
             }
             return;
         }
+#endif
 
         private void ExportJobs(IEnumerable<ApplicationJob> objects)
         {
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
                 dialog.Filter = "Application Definition|*.xml|Application Template|*.xml";
-                //dialog.FileOk += CheckForEmptyFileName;
+#if MONO
+                dialog.FileOk += CheckForEmptyFileName;
+#endif
                 dialog.CheckPathExists = true;
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
 
@@ -1191,7 +1193,9 @@ namespace Ketarin
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Filter = "XML file|*.xml";
+#if MONO
                 dialog.FileOk += CheckForEmptyFileName;
+#endif
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
 
                 try
