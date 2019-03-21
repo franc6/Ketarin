@@ -88,7 +88,7 @@ namespace Ketarin
         {
             InitializeComponent();
             olvJobs.Initialize();
-            olvJobs.ContextMenu = cmnuJobs;
+            olvJobs.ContextMenuStrip = cmnuJobs;
 
             colName.AspectGetter = x => ((ApplicationJob) x).Name;
             colName.GroupKeyGetter = delegate(object x) {
@@ -216,7 +216,7 @@ namespace Ketarin
             this.BeginInvoke((MethodInvoker)delegate
             {
                 bRun.Text = "&Update all";
-                bRun.SplitMenu = cmuRun;
+                bRun.SplitMenuStrip = cmuRun;
                 bRun.Image = Resources.Restart;
                 cmnuImportFile.Enabled = true;
                 mnuExportSelected.Enabled = true;
@@ -473,9 +473,9 @@ namespace Ketarin
                     return true;
             }
 
-            foreach (MenuItem item in cmnuJobs.MenuItems)
+            foreach (ToolStripItem item in cmnuJobs.Items)
             {
-                if ((int)item.Shortcut == (int)keyData && item.Enabled)
+                if ((item is ToolStripMenuItem) && ((ToolStripMenuItem)item).ShortcutKeys == keyData && item.Enabled)
                 {
                     item.PerformClick();
                     return true;
@@ -682,7 +682,7 @@ namespace Ketarin
             if (m_Updater.IsBusy) return;
 
             bRun.Text = "Cancel";
-            bRun.SplitMenu = null;
+            bRun.SplitMenuStrip = null;
             bRun.Image = null;
 #if !MONO
             bInstall.Enabled = false;
