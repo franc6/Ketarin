@@ -1,4 +1,7 @@
 version: 1.0.{build}
+branches:
+  only:
+  - Mono
 image: Visual Studio 2017
 configuration: Release
 assembly_info:
