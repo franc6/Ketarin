@@ -1,0 +1,32 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version} based on mainline Ketarin 1.8.10.1'
+nuget:
+  account_feed: true
+  project_feed: true
+  disable_publish_on_pr: true
+  disable_publish_octopus: true
+before_build:
+- cmd: nuget restore
+build:
+  project: Ketarin.csproj
+  verbosity: minimal
+after_build:
+- cmd: 7z a Ketarin-%APPVEYOR_BUILD_VERSION%.zip %APPVEYOR_BUILD_FOLDER%\bin\Release\*.dll %APPVEYOR_BUILD_FOLDER%\bin\Release\*.exe  %APPVEYOR_BUILD_FOLDER%\bin\Release\*.config %APPVEYOR_BUILD_FOLDER%\bin\Release\x86\SQLite.Interop.dll %APPVEYOR_BUILD_FOLDER%\Assemblies\DiffieHellman.dll
+artifacts:
+- path: Ketarin-%APPVEYOR_BUILD_VERSION%.zip
+  name: Ketarin-%APPVEYOR_BUILD_VERSION%.zip
+deploy:
+- provider: GitHub
+  release: Ketarin-%APPVEYOR_BUILD_VERSION%
+  auth_token:
+    secure: /e1bIobrUwT05baBOG8YBiBgQAQRpEP5XfMcnhKszh9+8ypAqAaGxh+WELR5ctJC
+  repository: franc6/Ketarin
+  artifact: Ketarin-%APPVEYOR_BUILD_VERSION%.zip
+  prerelease: true

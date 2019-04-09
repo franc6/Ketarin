@@ -1,0 +1,39 @@
+version: 1.0.{build}
+image: Ubuntu1604
+configuration: Mono - Release
+platform: x86
+assembly_info:
+  patch: true
+  file: Properties\AssemblyInfo.cs
+  assembly_version: '{version}'
+  assembly_file_version: '{version}'
+  assembly_informational_version: '{version} based on mainline Ketarin 1.8.10.1'
+nuget:
+  account_feed: true
+  project_feed: true
+  disable_publish_on_pr: true
+  disable_publish_octopus: true
+build_script:
+- sh: >-
+    TOP=`pwd`
+
+    nuget restore
+
+    msbuild /p:"Configuration=Mono - Release" /p:"Platform=Any CPU"
+
+    ZIPNAME="${TOP}/Ketarin-Mono-${APPVEYOR_BUILD_VERSION}.zip"
+
+    cd "${APPVEYOR_BUILD_FOLDER}/bin/Mono - Release/"
+
+    zip -9rp ${ZIPNAME} *
+artifacts:
+- path: Ketarin-Mono-${APPVEYOR_BUILD_VERSION}.zip
+  name: Ketarin-Mono-${APPVEYOR_BUILD_VERSION}.zip
+deploy:
+- provider: GitHub
+  release: Ketarin-Mono-${APPVEYOR_BUILD_VERSION}
+  auth_token:
+    secure: /e1bIobrUwT05baBOG8YBiBgQAQRpEP5XfMcnhKszh9+8ypAqAaGxh+WELR5ctJC
+  repository: franc6/Ketarin
+  artifact: Ketarin-Mono-${APPVEYOR_BUILD_VERSION}.zip
+  prerelease: true
