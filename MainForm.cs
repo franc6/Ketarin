@@ -1054,13 +1054,7 @@ namespace Ketarin
             {
                 if (job != null)
                 {
-#if NOTYET
-// Newer versions of the .NET runtime should use this instead of
-// Environment.OSVersion
-                    if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform() == OSPlatform.Windows)
-#else
                     if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-#endif
                     {
                         Process.Start("explorer", " /select," + job.CurrentLocation);
                     }
