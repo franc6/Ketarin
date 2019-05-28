@@ -240,9 +240,11 @@ namespace Ketarin
                     dialog.ShowDialog(this);
                 }
             });
-
-            ntiTrayIcon.Text = "Ketarin (Idle)";
-            ntiTrayIcon.ShowBalloonTip(5000, "Done", "Ketarin has finished the update check.", ToolTipIcon.Info);
+            if (ntiTrayIcon != null)
+            {
+                ntiTrayIcon.Text = "Ketarin (Idle)";
+                ntiTrayIcon.ShowBalloonTip(5000, "Done", "Ketarin has finished the update check.", ToolTipIcon.Info);
+            }
         }
 
         private void m_Updater_StatusChanged(object sender, Updater.JobStatusChangedEventArgs e)
@@ -258,13 +260,16 @@ namespace Ketarin
 
                 UpdateNumByStatus();
 
-                // Icon text length limited to 64 chars
-                string text = "Currently working on: " + e.ApplicationJob.Name;
-                if (text.Length >= 64)
+                if (ntiTrayIcon != null)
                 {
-                    text = text.Substring(0, 60) + "...";
+                    // Icon text length limited to 64 chars
+                    string text = "Currently working on: " + e.ApplicationJob.Name;
+                    if (text.Length >= 64)
+                    {
+                        text = text.Substring(0, 60) + "...";
+                    }
+                    ntiTrayIcon.Text = text;
                 }
-                ntiTrayIcon.Text = text;
             });
         }
 
@@ -361,7 +366,8 @@ namespace Ketarin
             {
                 if (Convert.ToBoolean(Settings.GetValue("MinimizeToTray", false)))
                 {
-                    ntiTrayIcon.Visible = true;
+                    if (ntiTrayIcon != null)
+                        ntiTrayIcon.Visible = true;
                     this.Hide();
                 }
             }

@@ -96,10 +96,15 @@
             this.cmuRun = new System.Windows.Forms.ContextMenu();
             this.cmnuCheckAndDownload = new System.Windows.Forms.MenuItem();
             this.cmnuOnlyCheck = new System.Windows.Forms.MenuItem();
-            this.ntiTrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.cmnuTrayIconMenu = new System.Windows.Forms.ContextMenu();
-            this.cmnuShow = new System.Windows.Forms.MenuItem();
-            this.cmnuExit = new System.Windows.Forms.MenuItem();
+            if (System.Environment.OSVersion.Platform == System.PlatformID.Win32NT)
+            {
+                this.ntiTrayIcon = new System.Windows.Forms.NotifyIcon(this.components);
+                this.cmnuTrayIconMenu = new System.Windows.Forms.ContextMenu();
+                this.cmnuShow = new System.Windows.Forms.MenuItem();
+                this.cmnuExit = new System.Windows.Forms.MenuItem();
+            }
+            else
+                this.ntiTrayIcon = null;
             this.statusBar = new System.Windows.Forms.StatusStrip();
             this.tbSelectedApplications = new System.Windows.Forms.ToolStripStatusLabel();
             this.tbNumByStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -576,31 +581,34 @@
             this.cmnuOnlyCheck.Index = 1;
             this.cmnuOnlyCheck.Text = "&Check all for updates only, do not download";
             this.cmnuOnlyCheck.Click += new System.EventHandler(this.cmnuOnlyCheck_Click);
-            // 
-            // ntiTrayIcon
-            // 
-            this.ntiTrayIcon.ContextMenu = this.cmnuTrayIconMenu;
-            this.ntiTrayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("ntiTrayIcon.Icon")));
-            this.ntiTrayIcon.Text = "Ketarin (Idle)";
-            this.ntiTrayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ntiTrayIcon_MouseDoubleClick);
-            // 
-            // cmnuTrayIconMenu
-            // 
-            this.cmnuTrayIconMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.cmnuShow,
-            this.cmnuExit});
-            // 
-            // cmnuShow
-            // 
-            this.cmnuShow.Index = 0;
-            this.cmnuShow.Text = "&Show";
-            this.cmnuShow.Click += new System.EventHandler(this.cmnuShow_Click);
-            // 
-            // cmnuExit
-            // 
-            this.cmnuExit.Index = 1;
-            this.cmnuExit.Text = "E&xit";
-            this.cmnuExit.Click += new System.EventHandler(this.cmnuExit_Click);
+            if (System.Environment.OSVersion.Platform == System.PlatformID.Win32NT)
+            {
+                // 
+                // ntiTrayIcon
+                // 
+                this.ntiTrayIcon.ContextMenu = this.cmnuTrayIconMenu;
+                this.ntiTrayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("ntiTrayIcon.Icon")));
+                this.ntiTrayIcon.Text = "Ketarin (Idle)";
+                this.ntiTrayIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ntiTrayIcon_MouseDoubleClick);
+                // 
+                // cmnuTrayIconMenu
+                // 
+                this.cmnuTrayIconMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+                this.cmnuShow,
+                this.cmnuExit});
+                // 
+                // cmnuShow
+                // 
+                this.cmnuShow.Index = 0;
+                this.cmnuShow.Text = "&Show";
+                this.cmnuShow.Click += new System.EventHandler(this.cmnuShow_Click);
+                // 
+                // cmnuExit
+                // 
+                this.cmnuExit.Index = 1;
+                this.cmnuExit.Text = "E&xit";
+                this.cmnuExit.Click += new System.EventHandler(this.cmnuExit_Click);
+            }
             // 
             // statusBar
             // 
