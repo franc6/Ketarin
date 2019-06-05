@@ -222,7 +222,9 @@ namespace Ketarin
                 mnuExportSelected.Enabled = true;
                 mnuExportAll.Enabled = true;
                 mnuImport.Enabled = true;
+#if !MONO
                 bInstall.Enabled = true;
+#endif
                 olvJobs.Refresh();
                 // Refresh sorting (last updated column for example)
                 // If groups are enabled, sorting causes the list to scroll back
@@ -239,8 +241,10 @@ namespace Ketarin
                 }
             });
 
+#if !MONO
             ntiTrayIcon.Text = "Ketarin (Idle)";
             ntiTrayIcon.ShowBalloonTip(5000, "Done", "Ketarin has finished the update check.", ToolTipIcon.Info);
+#endif
         }
 
         private void m_Updater_StatusChanged(object sender, Updater.JobStatusChangedEventArgs e)
@@ -256,6 +260,7 @@ namespace Ketarin
 
                 UpdateNumByStatus();
 
+#if !MONO
                 // Icon text length limited to 64 chars
                 string text = "Currently working on: " + e.ApplicationJob.Name;
                 if (text.Length >= 64)
@@ -263,6 +268,7 @@ namespace Ketarin
                     text = text.Substring(0, 60) + "...";
                 }
                 ntiTrayIcon.Text = text;
+#endif
             });
         }
 
@@ -359,7 +365,9 @@ namespace Ketarin
             {
                 if (Convert.ToBoolean(Settings.GetValue("MinimizeToTray", false)))
                 {
+#if !MONO
                     ntiTrayIcon.Visible = true;
+#endif
                     this.Hide();
                 }
             }
@@ -609,10 +617,12 @@ namespace Ketarin
             RunJobs(true, false, false);
         }
 
+#if !MONO
         private void cmnuUpdateAndInstall_Click(object sender, EventArgs e)
         {
             RunJobs(true, false, true);
         }
+#endif
 
         private void cmnuForceDownload_Click(object sender, EventArgs e)
         {
@@ -628,6 +638,7 @@ namespace Ketarin
 
         #endregion
 
+#if !MONO
         #region Install button
 
         private void bInstall_Click(object sender, EventArgs e)
@@ -647,6 +658,7 @@ namespace Ketarin
         }
 
         #endregion
+#endif
 
         /// <summary>
         /// Updates all items, using the same order as the
@@ -678,7 +690,9 @@ namespace Ketarin
             bRun.Text = "Cancel";
             bRun.SplitMenu = null;
             bRun.Image = null;
+#if !MONO
             bInstall.Enabled = false;
+#endif
             cmnuImportFile.Enabled = false;
             mnuExportSelected.Enabled = false;
             mnuExportAll.Enabled = false;
@@ -733,6 +747,7 @@ namespace Ketarin
             }
         }
 
+#if !MONO
         private void cmnuInstall_Click(object sender, EventArgs e)
         {
             InstallSelectedApplications();
@@ -747,6 +762,7 @@ namespace Ketarin
                 setupDialog.ShowDialog(this);
             }
         }
+#endif
 
         private void cmuUpdate_Click(object sender, EventArgs e)
         {
@@ -790,8 +806,10 @@ namespace Ketarin
             cmnuRename.Enabled = cmnuOpenFile.Enabled;
             cmnuCopy.Enabled = (olvJobs.SelectedObjects.Count != 0);
             cmnuPaste.Enabled = SafeClipboard.IsDataPresent(DataFormats.Text);
+#if !MONO
             cmnuInstall.Enabled = (!m_Updater.IsBusy);
             cmnuUpdateInstall.Enabled = (!m_Updater.IsBusy);
+#endif
             cmnuRunPostDownload.Enabled = job != null && !string.IsNullOrEmpty(job.ExecuteCommand);
         }
 
@@ -1054,6 +1072,7 @@ namespace Ketarin
             }
         }
 
+#if !MONO
         private void InstallSelectedApplications()
         {
             using (InstallingApplicationsDialog setupDialog = new InstallingApplicationsDialog())
@@ -1062,6 +1081,7 @@ namespace Ketarin
                 setupDialog.ShowDialog(this);
             }
         }
+#endif
 
         private void ExecuteHotkey(Hotkey hotkey, ApplicationJob job)
         {
@@ -1073,11 +1093,15 @@ namespace Ketarin
                 case "Edit": EditJob(job); break;
                 case "Update": RunJobs(jobs, false, false, false); break;
                 case "ForceDownload": RunJobs(jobs, false, true, false); break;
+#if !MONO
                 case "InstallSelected": InstallSelectedApplications(); break;
+#endif
                 case "OpenFile": OpenFile(job); break;
                 case "OpenFolder": OpenDownloadFolder(job); break;
                 case "CheckUpdate": RunJobs(jobs, true, false, false); break;
+#if !MONO
                 case "UpdateAndInstall": RunJobs(jobs, false, false, true); break;
+#endif
             }
         }
 
@@ -1123,7 +1147,9 @@ namespace Ketarin
                 olvJobs.Bounds = new Rectangle(olvJobs.Left, olvJobs.Top, olvJobs.Width, olvJobs.Height + statusBar.Height);
                 bRun.Top = olvJobs.Bottom + 7;
                 bAddApplication.Top = olvJobs.Bottom + 7;
+#if !MONO
                 bInstall.Top = olvJobs.Bottom + 7;
+#endif
             }
             else
             {
@@ -1133,7 +1159,9 @@ namespace Ketarin
                 olvJobs.Bounds = new Rectangle(olvJobs.Left, olvJobs.Top, olvJobs.Width, olvJobs.Height - statusBar.Height);
                 bRun.Top = olvJobs.Bottom + 7;
                 bAddApplication.Top = olvJobs.Bottom + 7;
+#if !MONO
                 bInstall.Top = olvJobs.Bottom + 7;
+#endif
             }
         }
 
