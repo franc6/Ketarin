@@ -711,6 +711,7 @@ namespace Ketarin
             OpenFile(job);
         }
 
+#if !MONO
         private void cmnuProperties_Click(object sender, EventArgs e)
         {
             try
@@ -723,6 +724,7 @@ namespace Ketarin
                 // ignore if fails for whatever reason
             }
         }
+#endif
 
         private void cmnuOpenFolder_Click(object sender, EventArgs e)
         {
@@ -801,7 +803,9 @@ namespace Ketarin
             cmnuCheckForUpdate.Enabled = (!m_Updater.IsBusy);
             cmnuForceDownload.Enabled = (!m_Updater.IsBusy);
             cmnuOpenFile.Enabled = (job != null && !(m_Updater.GetStatus(job) == Updater.Status.Downloading) && job.FileExists);
+#if !MONO
             cmnuProperties.Enabled = (job != null && job.FileExists);
+#endif
             cmnuOpenFolder.Enabled = (job != null && job.FileExists);
             cmnuRename.Enabled = cmnuOpenFile.Enabled;
             cmnuCopy.Enabled = (olvJobs.SelectedObjects.Count != 0);

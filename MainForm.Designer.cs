@@ -46,7 +46,9 @@
             this.menuItem5 = new System.Windows.Forms.MenuItem();
             this.cmnuOpenFile = new System.Windows.Forms.MenuItem();
             this.cmnuOpenFolder = new System.Windows.Forms.MenuItem();
+#if !MONO
             this.cmnuProperties = new System.Windows.Forms.MenuItem();
+#endif
             this.cmnuRename = new System.Windows.Forms.MenuItem();
             this.menuItem4 = new System.Windows.Forms.MenuItem();
             this.cmnuEdit = new System.Windows.Forms.MenuItem();
@@ -88,7 +90,9 @@
             this.colTarget = new CDBurnerXP.Controls.OLVColumn();
             this.colCategory = new CDBurnerXP.Controls.OLVColumn();
             this.colStatus = new CDBurnerXP.Controls.OLVColumn();
+#if !MONO
             this.m_VistaMenu = new CDBurnerXP.Controls.VistaMenu(this.components);
+#endif
             this.cmuRun = new System.Windows.Forms.ContextMenu();
             this.cmnuCheckAndDownload = new System.Windows.Forms.MenuItem();
             this.cmnuOnlyCheck = new System.Windows.Forms.MenuItem();
@@ -108,7 +112,9 @@
             this.bRun = new wyDay.Controls.SplitButton();
             this.bAddApplication = new wyDay.Controls.SplitButton();
             ((System.ComponentModel.ISupportInitialize)(this.olvJobs)).BeginInit();
+#if !MONO
             ((System.ComponentModel.ISupportInitialize)(this.m_VistaMenu)).BeginInit();
+#endif
             this.statusBar.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -134,7 +140,9 @@
             this.menuItem5,
             this.cmnuOpenFile,
             this.cmnuOpenFolder,
+#if !MONO
             this.cmnuProperties,
+#endif
             this.cmnuRename,
             this.menuItem4,
             this.cmnuEdit,
@@ -147,7 +155,9 @@
             // 
             // cmnuUpdate
             // 
+#if !MONO
             this.m_VistaMenu.SetImage(this.cmnuUpdate, global::Ketarin.Properties.Resources.Restart);
+#endif
             int index = 0;
             this.cmnuUpdate.Index = index++;
             this.cmnuUpdate.Shortcut = System.Windows.Forms.Shortcut.CtrlU;
@@ -222,6 +232,7 @@
             this.cmnuOpenFolder.Index = index++;
             this.cmnuOpenFolder.Text = "Ope&n folder";
             this.cmnuOpenFolder.Click += new System.EventHandler(this.cmnuOpenFolder_Click);
+#if !MONO
             // 
             // cmnuProperties
             // 
@@ -230,6 +241,7 @@
             this.cmnuProperties.Shortcut = System.Windows.Forms.Shortcut.F9;
             this.cmnuProperties.Text = "File propertie&s";
             this.cmnuProperties.Click += new System.EventHandler(this.cmnuProperties_Click);
+#endif
             // 
             // cmnuRename
             // 
@@ -310,8 +322,10 @@
             this.mnuFile.Text = "&File";
             // 
             // mnuNew
-            // 
+            //
+#if !MONO
             this.m_VistaMenu.SetImage(this.mnuNew, global::Ketarin.Properties.Resources.AddSmall);
+#endif
             this.mnuNew.Index = 0;
             this.mnuNew.Shortcut = System.Windows.Forms.Shortcut.CtrlN;
             this.mnuNew.Text = "&New application...";
@@ -536,10 +550,12 @@
             this.colStatus.IsVisible = false;
             this.colStatus.Text = "Status";
             this.colStatus.Width = 80;
+#if !MONO
             // 
             // m_VistaMenu
             // 
             this.m_VistaMenu.ContainerControl = this;
+#endif
             // 
             // cmuRun
             // 
@@ -691,7 +707,9 @@
             this.SavePosition = true;
             this.Text = "Ketarin";
             ((System.ComponentModel.ISupportInitialize)(this.olvJobs)).EndInit();
+#if !MONO
             ((System.ComponentModel.ISupportInitialize)(this.m_VistaMenu)).EndInit();
+#endif
             this.statusBar.ResumeLayout(false);
             this.statusBar.PerformLayout();
             this.ResumeLayout(false);
@@ -703,7 +721,9 @@
 
         private ApplicationJobsListView olvJobs;
         private System.Windows.Forms.ImageList imlStatus;
+#if !MONO
         private CDBurnerXP.Controls.VistaMenu m_VistaMenu;
+#endif
         private System.Windows.Forms.ContextMenu cmnuJobs;
         private System.Windows.Forms.MenuItem cmnuUpdate;
         private System.Windows.Forms.MenuItem menuItem4;
@@ -763,8 +783,8 @@
 #endif
         private CDBurnerXP.Controls.OLVColumn colStatus;
         private System.Windows.Forms.ToolStripStatusLabel tbNumByStatus;
-        private System.Windows.Forms.MenuItem cmnuProperties;
 #if !MONO
+        private System.Windows.Forms.MenuItem cmnuProperties;
         private wyDay.Controls.SplitButton bInstall;
         private System.Windows.Forms.MenuItem cmnuInstall;
         private System.Windows.Forms.MenuItem cmnuUpdateInstall;
