@@ -14,4 +14,5 @@ Basically, it monitors the content of web pages for changes and downloads files 
 
 ## Development
 
-[![Build status](https://ci.appveyor.com/api/projects/status/64v9x5oobte4rkaj?svg=true)](https://ci.appveyor.com/project/floele/ketarin)
+Windows: [![Build status](https://ci.appveyor.com/api/projects/status/jdlrqtgay8gn5vmf/branch/Mono?svg=true)](https://ci.appveyor.com/project/franc6/ketarin/branch/Mono)
+Linux: [![Build status](https://ci.appveyor.com/api/projects/status/w66t8m69lfh5lhyb/branch/Mono?svg=true)](https://ci.appveyor.com/project/franc6/ketarin-lf204/branch/Mono)
