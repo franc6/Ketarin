@@ -77,12 +77,12 @@ namespace Ketarin
             // Do not try using SSL3 by default since some websites make SSL3 requests fail.
             ServicePointManager.SecurityProtocol = Updater.DefaultHttpProtocols;
 
-#if !MONO
             // Either run silently on command line...
             if (arguments["silent"] != null)
             {
+#if !MONO
                 Kernel32.ManagedAttachConsole(Kernel32.ATTACH_PARENT_PROCESS);
-
+#endif
                 ApplicationJob[] jobs = DbManager.GetJobs();
                 
                 // Filter by application name and category.
@@ -103,6 +103,7 @@ namespace Ketarin
                 updater.ProgressChanged += updater_ProgressChanged;
                 updater.BeginUpdate(jobs, false, false);
 
+#if !MONO
                 if (arguments["notify"] != null)
                 {
                     m_Icon = new NotifyIcon
@@ -112,20 +113,21 @@ namespace Ketarin
                         Visible = true
                     };
                 }
+#endif
 
                 while (updater.IsBusy)
                 {
                     Thread.Sleep(1000);
                 }
 
+#if !MONO
                 m_Icon?.Dispose();
 
                 Kernel32.FreeConsole();
+#endif
             }
             // ...perform database operations...
-            else
-#endif
-	       	if (arguments["update"] != null && arguments["appguid"] != null)
+            else if (arguments["update"] != null && arguments["appguid"] != null)
             {
                 // Update properties of an application in the database
                 ApplicationJob job = DbManager.GetJob(new Guid(arguments["appguid"]));
