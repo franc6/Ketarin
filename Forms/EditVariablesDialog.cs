@@ -232,7 +232,7 @@ namespace Ketarin.Forms
 
             try
             {
-                // Uodate controls which belong to the variable
+                // Update controls which belong to the variable
                 using (new ControlRedrawLock(this))
                 {
 #if !MONO
