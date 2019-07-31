@@ -21,7 +21,7 @@ namespace Ketarin.Forms
         {
             base.OnLoad(e);
 
-            lblVersion.Text = Application.ProductVersion;
+            lblVersion.Text = Application.ProductVersion + " (based on official Ketarin " + System.Diagnostics.FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion + ")";
             lblDatabasePath.Text = Utility.CompactString(DbManager.DatabasePath, Width - 170, Font, "");
             lblDatabasePath.Url = Path.GetDirectoryName(DbManager.DatabasePath);
             txtAuthor.Text = Settings.GetValue("AuthorGuid").ToString().ToUpper();
