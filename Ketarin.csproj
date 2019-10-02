@@ -82,6 +82,7 @@
     <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL" Condition=" ! $(Configuration.Contains('Mono'))">
       <HintPath>packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Posix" Condition="$(Configuration.Contains('Mono'))" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data.SQLite, Version=1.0.109.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL" Condition=" ! $(Configuration.Contains('Mono'))">
@@ -403,6 +404,7 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MaskedPermissions.cs" Condition=" $(Configuration.Contains('Mono'))" />
     <Compile Include="NonBinaryFileException.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

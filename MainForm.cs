@@ -1214,6 +1214,10 @@ namespace Ketarin
                 try
                 {
                     File.WriteAllText(dialog.FileName, ApplicationJob.GetXml(objects, dialog.FilterIndex == 2, Encoding.UTF8), Encoding.UTF8);
+#if MONO
+		    MaskedPermissions.setMaskedPermissions(dialog.FileName,
+			Mono.Unix.Native.FilePermissions.DEFFILEMODE);
+#endif
                 }
                 catch (Exception ex)
                 {

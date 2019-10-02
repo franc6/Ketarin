@@ -925,6 +925,10 @@ namespace Ketarin
                     // However, we cannot rely on functions to clean up the path, since they
                     // might actually parse the path incorrectly and return an even worse path.
                     File.Copy(tmpLocation, targetFileName, true);
+#if MONO
+                    MaskedPermissions.setMaskedPermissions(targetFileName,
+                        Mono.Unix.Native.FilePermissions.DEFFILEMODE);
+#endif
                 }
                 catch (ArgumentException)
                 {
