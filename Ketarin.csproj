@@ -269,6 +269,12 @@
     <Compile Include="Forms\InstructionBaseDialog.Designer.cs">
       <DependentUpon>InstructionBaseDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\KFileDialog.cs" Condition="$(Configuration.Contains('Mono'))">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\KFileDialog.Designer.cs" Condition="$(Configuration.Contains('Mono'))">
+      <DependentUpon>KFileDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\StartProcessInstructionDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -437,6 +443,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\InstallingApplicationsDialog.resx">
       <DependentUpon>InstallingApplicationsDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\KFileDialog.resx" Condition="$(Configuration.Contains('Mono'))">
+      <DependentUpon>KFileDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SetupInstructionListBoxPanel.resx">
       <DependentUpon>SetupInstructionListBoxPanel.cs</DependentUpon>

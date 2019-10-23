@@ -1202,6 +1202,24 @@ namespace Ketarin
 
         private void ExportJobs(IEnumerable<ApplicationJob> objects)
         {
+#if MONO
+	    using (KFileDialog kfd = new KFileDialog(KFileDialog.Type.SaveAs))
+	    {
+                kfd.Filter = "Application Definition|*.xml|Application Template|*.xml";
+                kfd.CheckPathExists = true;
+                if (kfd.ShowDialog(this) != DialogResult.OK) return;
+                try
+                {
+                    File.WriteAllText(kfd.FileName, ApplicationJob.GetXml(objects, kfd.FilterIndex == 2, Encoding.UTF8), Encoding.UTF8);
+		    MaskedPermissions.setMaskedPermissions(kfd.FileName,
+			Mono.Unix.Native.FilePermissions.DEFFILEMODE);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Failed to save the file: " + ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+	    }
+#else
             using (SaveFileDialog dialog = new SaveFileDialog())
             {
                 dialog.Filter = "Application Definition|*.xml|Application Template|*.xml";
@@ -1214,16 +1232,13 @@ namespace Ketarin
                 try
                 {
                     File.WriteAllText(dialog.FileName, ApplicationJob.GetXml(objects, dialog.FilterIndex == 2, Encoding.UTF8), Encoding.UTF8);
-#if MONO
-		    MaskedPermissions.setMaskedPermissions(dialog.FileName,
-			Mono.Unix.Native.FilePermissions.DEFFILEMODE);
-#endif
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show(this, "Failed to save the file: " + ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+#endif
         }
 
         private void mnuExportAll_Click(object sender, EventArgs e)
@@ -1233,12 +1248,27 @@ namespace Ketarin
 
         private void mnuImport_Click(object sender, EventArgs e)
         {
+#if MONO
+	    using (KFileDialog kfd = new KFileDialog(KFileDialog.Type.Open))
+	    {
+		kfd.Filter = "XML file|*.xml";
+		if (kfd.ShowDialog(this) != DialogResult.OK)
+		    return;
+                try
+                {
+                    ImportFromFile(kfd.FileName);
+
+                    UpdateList();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(this, "Failed to import the file: " + ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+#else
             using (OpenFileDialog dialog = new OpenFileDialog())
             {
                 dialog.Filter = "XML file|*.xml";
-#if MONO
-                dialog.FileOk += CheckForEmptyFileName;
-#endif
                 if (dialog.ShowDialog(this) != DialogResult.OK) return;
 
                 try
@@ -1252,6 +1282,7 @@ namespace Ketarin
                     MessageBox.Show(this, "Failed to import the file: " + ex.Message, Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+#endif
         }
 
         private void ImportFromFile(string file)
