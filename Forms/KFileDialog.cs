@@ -117,7 +117,7 @@ namespace Ketarin.Forms
 	    }
 	}
 
-        public string InitialDir
+        public string InitialDirectory
 	{
 	    set
 	    {
