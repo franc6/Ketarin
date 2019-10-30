@@ -221,14 +221,22 @@ namespace Ketarin.Forms
 
         private void bExport_Click(object sender, EventArgs e)
         {
+#if MONO
+	    using (KFileDialog dialog = new KFileDialog(KFileDialog.Type.SaveAs))
+#else
             using (SaveFileDialog dialog = new SaveFileDialog())
+#endif
             {
                 dialog.Filter = "XML file|*.xml";
                 if (dialog.ShowDialog(this) == DialogResult.OK)
                 {
                     try
                     {
-                        SettingsExporter.ExportToFile(dialog.FileName);                     
+                        SettingsExporter.ExportToFile(dialog.FileName);
+#if MONO
+			MaskedPermissions.setMaskedPermissions(dialog.FileName,
+			    Mono.Unix.Native.FilePermissions.DEFFILEMODE);
+#endif
                     }
                     catch (Exception ex)
                     {
@@ -240,7 +248,11 @@ namespace Ketarin.Forms
 
         private void bImport_Click(object sender, EventArgs e)
         {
+#if MONO
+	    using (KFileDialog dialog = new KFileDialog(KFileDialog.Type.Open))
+#else
             using (OpenFileDialog dialog = new OpenFileDialog())
+#endif
             {
                 dialog.Filter = "XML file|*.xml";
                 if (dialog.ShowDialog(this) == DialogResult.OK)

@@ -110,7 +110,11 @@ namespace Ketarin.Forms
 
         private void bBrowse_Click(object sender, EventArgs e)
         {
+#if MONO
+            using (KFileDialog dialog = new KFileDialog(KFileDialog.Type.Open))
+#else
             using (OpenFileDialog dialog = new OpenFileDialog())
+#endif
             {
                 try
                 {

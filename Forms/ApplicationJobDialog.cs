@@ -294,7 +294,11 @@ namespace Ketarin.Forms
 
             if (this.rbFileName.Checked)
             {
+#if MONO
+                using (KFileDialog dialog = new KFileDialog(KFileDialog.Type.SaveAs))
+#else
                 using (SaveFileDialog dialog = new SaveFileDialog())
+#endif
                 {
                     dialog.InitialDirectory = this.txtTarget.Text;
                     if (dialog.ShowDialog() == DialogResult.OK)
