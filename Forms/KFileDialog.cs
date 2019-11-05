@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using System.IO;
 using CDBurnerXP.IO;
 using Mono.Unix.Native;
+using Microsoft.Win32;
 
 namespace Ketarin.Forms
 {
     public partial class KFileDialog : Form
     {
+	private string KFileDialogKey = "HKEY_CURRENT_USER\\Software\\KFileDialog";
+	private string ViewTypeValue = "ViewType";
 	private bool m_CheckFileExists;
 	private bool m_CheckPathExists;
         private string m_Directory;
@@ -42,6 +45,23 @@ namespace Ketarin.Forms
 	    fileListView.Columns.Add("Type", -2, HorizontalAlignment.Left);
 	    fileListView.Columns.Add("Date Modified", -2, HorizontalAlignment.Left);
 	    fileListView.ListViewItemSorter = new ListViewItemComparer(sortColumn, sortAscending);
+	    View newView = (View)((int) Registry.GetValue(KFileDialogKey, ViewTypeValue, View.List));
+	    switch (newView)
+	    {
+		case View.LargeIcon:
+		    this.viewLargeIcon_Click(null, null);
+		    break;
+		case View.SmallIcon:
+		    this.viewSmallIcon_Click(null, null);
+		    break;
+		case View.List:
+		    this.viewList_Click(null, null);
+		    break;
+		default:
+		case View.Details:
+		    this.viewDetails_Click(null, null);
+		    break;
+	    }
 	    currentFilter = null;
 	    if (type == Type.Open)
 	    {
@@ -392,6 +412,7 @@ namespace Ketarin.Forms
         protected void viewLargeIcon_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.LargeIcon;
+	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = true;
             this.viewSmallIcon.Checked = false;
             this.viewList.Checked = false;
@@ -401,6 +422,7 @@ namespace Ketarin.Forms
         protected void viewSmallIcon_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.SmallIcon;
+	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = false;
             this.viewSmallIcon.Checked = true;
             this.viewList.Checked = false;
@@ -410,6 +432,7 @@ namespace Ketarin.Forms
         protected void viewList_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.List;
+	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = false;
             this.viewSmallIcon.Checked = false;
             this.viewList.Checked = true;
@@ -419,6 +442,7 @@ namespace Ketarin.Forms
         protected void viewDetails_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.Details;
+	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = false;
             this.viewSmallIcon.Checked = false;
             this.viewList.Checked = false;
