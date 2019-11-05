@@ -132,6 +132,7 @@
             this.fileName.Size = new System.Drawing.Size(243, 20);
             this.fileName.TabIndex = 0;
             this.fileName.SelectedIndexChanged += new System.EventHandler(fileName_SelectedIndexChanged);
+	    this.fileName.KeyDown += new System.Windows.Forms.KeyEventHandler(fileName_KeyDown);
             // 
             // mountList
             // 

@@ -462,6 +462,14 @@ namespace Ketarin.Forms
             }
         }
 
+        protected void fileName_KeyDown(object sender, KeyEventArgs eventArgs)
+	{
+	    if (eventArgs.KeyCode == Keys.Enter)
+	    {
+		this.ok_Click(null, null);
+	    }
+	}
+
         protected void fileName_SelectedIndexChanged(object sender, System.EventArgs eventArgs)
         {
             string tmpFileName = (string)fileName.SelectedItem;
