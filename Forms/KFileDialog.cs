@@ -18,6 +18,7 @@ namespace Ketarin.Forms
     {
 	private string KFileDialogKey = "HKEY_CURRENT_USER\\Software\\KFileDialog";
 	private string ViewTypeValue = "ViewType";
+	private string ColumnWidthValue = "ColumnWidth";
 	private bool m_CheckFileExists;
 	private bool m_CheckPathExists;
         private string m_Directory;
@@ -62,6 +63,7 @@ namespace Ketarin.Forms
 		    this.viewDetails_Click(null, null);
 		    break;
 	    }
+	    setColumnWidths();
 	    currentFilter = null;
 	    if (type == Type.Open)
 	    {
@@ -371,6 +373,7 @@ namespace Ketarin.Forms
 
         protected void ok_Click(object sender, System.EventArgs eventArgs)
         {
+	    this.saveColumnWidths();
 	    if (fileName.Text.Length > 0)
 	    {
 		string checkFile = getFullPathName();
@@ -404,6 +407,7 @@ namespace Ketarin.Forms
 
         protected void cancel_Click(object sender, System.EventArgs eventArgs)
         {
+	    this.saveColumnWidths();
 	    this.DialogResult = DialogResult.Cancel;
             this.Close();
 	    this.Dispose();
@@ -522,6 +526,30 @@ namespace Ketarin.Forms
 	    }
 	    return Path.Combine(m_Directory, pathName);
 	}
+
+        private void saveColumnWidths()
+        {
+            Registry.SetValue(KFileDialogKey, ColumnWidthValue+"1",
+                fileListView.Columns[0].Width);
+            Registry.SetValue(KFileDialogKey, ColumnWidthValue+"2",
+                fileListView.Columns[1].Width);
+            Registry.SetValue(KFileDialogKey, ColumnWidthValue+"3",
+                fileListView.Columns[2].Width);
+            Registry.SetValue(KFileDialogKey, ColumnWidthValue+"4",
+                fileListView.Columns[3].Width);
+        }
+
+        private void setColumnWidths()
+        {
+            fileListView.Columns[0].Width =
+                (int) Registry.GetValue(KFileDialogKey, ColumnWidthValue+"1", -2);
+            fileListView.Columns[1].Width =
+                (int) Registry.GetValue(KFileDialogKey, ColumnWidthValue+"2", -2);
+            fileListView.Columns[2].Width =
+                (int) Registry.GetValue(KFileDialogKey, ColumnWidthValue+"3", -2);
+            fileListView.Columns[3].Width =
+                (int) Registry.GetValue(KFileDialogKey, ColumnWidthValue+"4", -2);
+        }
 
 	class ListViewItemComparer : System.Collections.IComparer
 	{
