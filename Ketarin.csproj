@@ -601,6 +601,8 @@
     <Content Include="ketarin.ico">
       <Generator>up</Generator>
     </Content>
+    <None Include="Resources\16_folder.png" />
+    <None Include="Resources\folder.png" />
     <None Include="Resources\DeleteHS.png" />
     <None Include="Resources\GoToNextMessage.png" />
     <None Include="Resources\GoToPreviousMessage.png" />

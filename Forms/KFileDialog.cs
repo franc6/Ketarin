@@ -16,92 +16,100 @@ namespace Ketarin.Forms
 {
     public partial class KFileDialog : Form
     {
-	private string KFileDialogKey = "HKEY_CURRENT_USER\\Software\\KFileDialog";
-	private string ViewTypeValue = "ViewType";
-	private string ColumnWidthValue = "ColumnWidth";
-	private bool m_CheckFileExists;
-	private bool m_CheckPathExists;
+        private string KFileDialogKey = "HKEY_CURRENT_USER\\Software\\KFileDialog";
+        private string ViewTypeValue = "ViewType";
+        private string ColumnWidthValue = "ColumnWidth";
+        private bool m_CheckFileExists;
+        private bool m_CheckPathExists;
         private string m_Directory;
         private string m_Filter;
-	private string m_FileName;
-	private string currentFilter;
-	private Dictionary<string, string> filterDictionary;
+        private string m_FileName;
+        private string currentFilter;
+        private Dictionary<string, string> filterDictionary;
         public enum Type
         {
             Open,
             SaveAs
         }
-	private Type type;
-	private int sortColumn;
+        private Type type;
+        private int sortColumn;
         private bool sortAscending;
         public KFileDialog(Type type)
         {
-	    this.type = type;
-	    sortColumn = 0;
-	    sortAscending = true;
+            this.type = type;
+            sortColumn = 0;
+            sortAscending = true;
             inLoadFileList = false;
             InitializeComponent();
-	    fileListView.Columns.Add("Name", -2, HorizontalAlignment.Left);
-	    fileListView.Columns.Add("Size", -2, HorizontalAlignment.Right);
-	    fileListView.Columns.Add("Type", -2, HorizontalAlignment.Left);
-	    fileListView.Columns.Add("Date Modified", -2, HorizontalAlignment.Left);
-	    fileListView.ListViewItemSorter = new ListViewItemComparer(sortColumn, sortAscending);
-	    View newView = (View)((int) Registry.GetValue(KFileDialogKey, ViewTypeValue, View.List));
-	    switch (newView)
-	    {
-		case View.LargeIcon:
-		    this.viewLargeIcon_Click(null, null);
-		    break;
-		case View.SmallIcon:
-		    this.viewSmallIcon_Click(null, null);
-		    break;
-		case View.List:
-		    this.viewList_Click(null, null);
-		    break;
-		default:
-		case View.Details:
-		    this.viewDetails_Click(null, null);
-		    break;
-	    }
-	    setColumnWidths();
-	    currentFilter = null;
-	    if (type == Type.Open)
-	    {
-		CheckFileExists = true;
-		Text = "Open";
-		ok.Text = "Open";
-	    }
-	    else
-	    {
-		Text = "Save As";
-		ok.Text = "Save";
-	    }
+            fileListView.SmallImageList = new ImageList();
+	    fileListView.SmallImageList.ImageSize = new Size(16,16);
+            fileListView.SmallImageList.Images.Add(global::Ketarin.Properties.Resources.SmallFolder);
+            fileListView.SmallImageList.Images.Add(global::Ketarin.Properties.Resources.Document);
+            fileListView.LargeImageList = new ImageList();
+	    fileListView.LargeImageList.ImageSize = new Size(32,32);
+            fileListView.LargeImageList.Images.Add(global::Ketarin.Properties.Resources.Folder);
+            fileListView.LargeImageList.Images.Add(global::Ketarin.Properties.Resources.Document);
+            fileListView.Columns.Add("Name", -2, HorizontalAlignment.Left);
+            fileListView.Columns.Add("Size", -2, HorizontalAlignment.Right);
+            fileListView.Columns.Add("Type", -2, HorizontalAlignment.Left);
+            fileListView.Columns.Add("Date Modified", -2, HorizontalAlignment.Left);
+            fileListView.ListViewItemSorter = new ListViewItemComparer(sortColumn, sortAscending);
+            View newView = (View)((int) Registry.GetValue(KFileDialogKey, ViewTypeValue, View.List));
+            switch (newView)
+            {
+                case View.LargeIcon:
+                    this.viewLargeIcon_Click(null, null);
+                    break;
+                case View.SmallIcon:
+                    this.viewSmallIcon_Click(null, null);
+                    break;
+                case View.List:
+                    this.viewList_Click(null, null);
+                    break;
+                default:
+                case View.Details:
+                    this.viewDetails_Click(null, null);
+                    break;
+            }
+            setColumnWidths();
+            currentFilter = null;
+            if (type == Type.Open)
+            {
+                CheckFileExists = true;
+                Text = "Open";
+                ok.Text = "Open";
+            }
+            else
+            {
+                Text = "Save As";
+                ok.Text = "Save";
+            }
             loadMountList();
         }
 
-	public bool CheckFileExists
-	{
-	    get
-	    {
-		return m_CheckFileExists;
-	    }
-	    set
-	    {
-		m_CheckFileExists = value;
-	    }
-	}
+        public bool CheckFileExists
+        {
+            get
+            {
+                return m_CheckFileExists;
+            }
+            set
+            {
+                m_CheckFileExists = value;
+            }
+        }
 
-	public bool CheckPathExists
-	{
-	    get
-	    {
-		return m_CheckPathExists;
-	    }
-	    set
-	    {
-		m_CheckPathExists = value;
-	    }
-	}
+        public bool CheckPathExists
+        {
+            get
+            {
+                return m_CheckPathExists;
+            }
+            set
+            {
+                m_CheckPathExists = value;
+            }
+        }
 
         public string CurrentDir
         {
@@ -115,77 +123,77 @@ namespace Ketarin.Forms
             }
         }
 
-	public int FilterIndex
-	{
-	    get
-	    {
-		return extensions.SelectedIndex + 1;
-	    }
-	    set
-	    {
-		extensions.SelectedIndex = value - 1;
-	    }
-	}
+        public int FilterIndex
+        {
+            get
+            {
+                return extensions.SelectedIndex + 1;
+            }
+            set
+            {
+                extensions.SelectedIndex = value - 1;
+            }
+        }
 
-	public string Filter
-	{
-	    get
-	    {
-		return m_Filter;
-	    }
-	    set
-	    {
-		setFilter(value);
-	    }
-	}
+        public string Filter
+        {
+            get
+            {
+                return m_Filter;
+            }
+            set
+            {
+                setFilter(value);
+            }
+        }
 
         public string InitialDirectory
-	{
-	    set
-	    {
+        {
+            set
+            {
                 loadFileList(value);
-	    }
-	}
+            }
+        }
 
-	public string FileName
-       	{
-	    get
-	    {
-		return m_FileName;
-	    }
-	    set
-	    {
-		fileName.Text = value;
-	    }
-	}
-	
-	public bool MultiSelect
-	{
-	    get
-	    {
-		return fileListView.MultiSelect;
-	    }
-	    set
-	    {
-		if (type == Type.Open)
-		    fileListView.MultiSelect = value;
-		else
-		    fileListView.MultiSelect = false;
-	    }
-	}
+        public string FileName
+        {
+            get
+            {
+                return m_FileName;
+            }
+            set
+            {
+                fileName.Text = value;
+            }
+        }
+        
+        public bool MultiSelect
+        {
+            get
+            {
+                return fileListView.MultiSelect;
+            }
+            set
+            {
+                if (type == Type.Open)
+                    fileListView.MultiSelect = value;
+                else
+                    fileListView.MultiSelect = false;
+            }
+        }
 
         public void loadMountList()
         {
             List<string> items = new List<string>();
             items.Add("/");
-	    // Home directory for real user id, not effective user id
-	    Passwd passwd = new Passwd();
-	    Passwd passwdp = null;
-	    Syscall.getpwuid_r(Syscall.getuid(), passwd, out passwdp);
-	    items.Add(passwd.pw_dir);
-	    // TODO: Get mounted file systems -- unfortunately, there's no
-	    // standard interface for this. If available, use getfsstat() or
-	    // getmntinfo(), on Linux, use /proc/self/mountinfo
+            // Home directory for real user id, not effective user id
+            Passwd passwd = new Passwd();
+            Passwd passwdp = null;
+            Syscall.getpwuid_r(Syscall.getuid(), passwd, out passwdp);
+            items.Add(passwd.pw_dir);
+            // TODO: Get mounted file systems -- unfortunately, there's no
+            // standard interface for this. If available, use getfsstat() or
+            // getmntinfo(), on Linux, use /proc/self/mountinfo
             mountList.Items.AddRange(items.ToArray());
             mountList.SetSelected(0, true);
         }
@@ -193,29 +201,29 @@ namespace Ketarin.Forms
         public void loadFileList(string directory)
         {
             m_Directory = directory;
-	    loadFileList();
-	}
+            loadFileList();
+        }
 
-	private void loadFileList()
-	{
+        private void loadFileList()
+        {
             inLoadFileList = true;
             fileName.Text = "";
             fileName.Items.Clear();
             lookIn.Items.Clear();
-	    string[] directories = m_Directory.Split(Path.DirectorySeparatorChar);
-	    string pathSoFar = "" + Path.DirectorySeparatorChar;
+            string[] directories = m_Directory.Split(Path.DirectorySeparatorChar);
+            string pathSoFar = "" + Path.DirectorySeparatorChar;
             lookIn.Items.Add(pathSoFar);
-	    foreach (string dir in directories)
-	    {
-		if (dir.Length > 0)
-		{
-		    pathSoFar += dir;
-		    lookIn.Items.Add(pathSoFar);
-		    pathSoFar += Path.DirectorySeparatorChar;
-		}
-	    }
+            foreach (string dir in directories)
+            {
+                if (dir.Length > 0)
+                {
+                    pathSoFar += dir;
+                    lookIn.Items.Add(pathSoFar);
+                    pathSoFar += Path.DirectorySeparatorChar;
+                }
+            }
             List<ListViewItem> listViewItems = new List<ListViewItem>();
-	    DirectoryInfo thisDirInfo = new DirectoryInfo(m_Directory);
+            DirectoryInfo thisDirInfo = new DirectoryInfo(m_Directory);
             foreach (DirectoryInfo dirInfo in thisDirInfo.GetDirectories())
             {
                 bool show = true;
@@ -224,25 +232,25 @@ namespace Ketarin.Forms
                     show = false;
                 if (show)
                 {
-		    ListViewItem item = new ListViewItem(Path.GetFileName(dirInfo.Name), 0);
-		    // Size
-		    item.SubItems.Add("");
-		    // Type
-		    item.SubItems.Add("Directory");
-		    // Modified
-		    item.SubItems.Add(Directory.GetLastWriteTime(dirInfo.FullName).ToString());
-		    // Add both file and tmpFileName to the list!
-		    fileName.Items.Add(dirInfo.FullName);
-		    fileName.Items.Add(dirInfo.Name);
-		    lookIn.Items.Add(dirInfo.FullName);
-		    listViewItems.Add(item);
+                    ListViewItem item = new ListViewItem(Path.GetFileName(dirInfo.Name), 0);
+                    // Size
+                    item.SubItems.Add("");
+                    // Type
+                    item.SubItems.Add("Directory");
+                    // Modified
+                    item.SubItems.Add(Directory.GetLastWriteTime(dirInfo.FullName).ToString());
+                    // Add both file and tmpFileName to the list!
+                    fileName.Items.Add(dirInfo.FullName);
+                    fileName.Items.Add(dirInfo.Name);
+                    lookIn.Items.Add(dirInfo.FullName);
+                    listViewItems.Add(item);
                 }
             }
-	    FileInfo[] fileInfos = null;
-	    if (currentFilter != null)
-		fileInfos = thisDirInfo.GetFiles(currentFilter);
-	    else
-		fileInfos = thisDirInfo.GetFiles();
+            FileInfo[] fileInfos = null;
+            if (currentFilter != null)
+                fileInfos = thisDirInfo.GetFiles(currentFilter);
+            else
+                fileInfos = thisDirInfo.GetFiles();
             foreach (FileInfo fileInfo in fileInfos)
             {
                 bool show = true;
@@ -251,17 +259,17 @@ namespace Ketarin.Forms
                     show = false;
                 if (show)
                 {
-		    ListViewItem item = new ListViewItem(fileInfo.Name, 0);
-		    // Size
-		    item.SubItems.Add(GetBytesReadable(fileInfo.Length));
-		    // Type
-		    item.SubItems.Add("File");
-		    // Modified
-		    item.SubItems.Add(fileInfo.LastWriteTime.ToString());
-		    // Add both file and tmpFileName to the list!
-		    fileName.Items.Add(fileInfo.FullName);
-		    fileName.Items.Add(fileInfo.Name);
-		    listViewItems.Add(item);
+                    ListViewItem item = new ListViewItem(fileInfo.Name, 1);
+                    // Size
+                    item.SubItems.Add(GetBytesReadable(fileInfo.Length));
+                    // Type
+                    item.SubItems.Add("File");
+                    // Modified
+                    item.SubItems.Add(fileInfo.LastWriteTime.ToString());
+                    // Add both file and tmpFileName to the list!
+                    fileName.Items.Add(fileInfo.FullName);
+                    fileName.Items.Add(fileInfo.Name);
+                    listViewItems.Add(item);
                 }
             }
             lookIn.Text = m_Directory;
@@ -272,36 +280,36 @@ namespace Ketarin.Forms
             inLoadFileList = false;
         }
 
-	public void setFilter(string filter)
-	{
-	    string[] filters = filter.Split('|');
+        public void setFilter(string filter)
+        {
+            string[] filters = filter.Split('|');
 
-	    if ((filters.Length % 2) != 0)
-		// TODO: Throw an exception here, because the filter isn't
-		// right!
-		return;
+            if ((filters.Length % 2) != 0)
+                // TODO: Throw an exception here, because the filter isn't
+                // right!
+                return;
 
-	    extensions.BeginUpdate();
-	    m_Filter = filter;
-	    filterDictionary = new Dictionary<string, string>();
-	    for (int i = 0; i < filters.Length; i+=2)
-	    {
-		filterDictionary.Add(filters[i], filters[i+1]);
-	    }
-	    extensions.DataSource = new BindingSource(filterDictionary, null);
-	    extensions.DisplayMember = "Key";
-	    extensions.ValueMember = "Value";
-	    extensions.EndUpdate();
-	    extensions.SelectedIndex = 0;
-	}
+            extensions.BeginUpdate();
+            m_Filter = filter;
+            filterDictionary = new Dictionary<string, string>();
+            for (int i = 0; i < filters.Length; i+=2)
+            {
+                filterDictionary.Add(filters[i], filters[i+1]);
+            }
+            extensions.DataSource = new BindingSource(filterDictionary, null);
+            extensions.DisplayMember = "Key";
+            extensions.ValueMember = "Value";
+            extensions.EndUpdate();
+            extensions.SelectedIndex = 0;
+        }
 
         protected void extensions_SelectedIndexChanged(object sender, System.EventArgs eventArgs)
         {
-	    currentFilter = ((KeyValuePair<string, string>)extensions.SelectedItem).Value;
+            currentFilter = ((KeyValuePair<string, string>)extensions.SelectedItem).Value;
             if (!inLoadFileList)
             {
-		loadFileList();
-	    }
+                loadFileList();
+            }
         }
 
         protected void mountList_SelectedIndexChanged(object sender, System.EventArgs eventArgs)
@@ -310,21 +318,21 @@ namespace Ketarin.Forms
         }
 
         protected void fileListView_ColumnClick(object sender, ColumnClickEventArgs eventArgs)
-	{
-	    if (sortColumn == eventArgs.Column)
-	    {
-		if (sortAscending)
-		    sortAscending = false;
-		else
-		    sortAscending = true;
-	    }
-	    else
-	    {
-		sortColumn = eventArgs.Column;
-		sortAscending = true;
-	    }
-	    fileListView.ListViewItemSorter = new ListViewItemComparer(sortColumn, sortAscending);
-	}
+        {
+            if (sortColumn == eventArgs.Column)
+            {
+                if (sortAscending)
+                    sortAscending = false;
+                else
+                    sortAscending = true;
+            }
+            else
+            {
+                sortColumn = eventArgs.Column;
+                sortAscending = true;
+            }
+            fileListView.ListViewItemSorter = new ListViewItemComparer(sortColumn, sortAscending);
+        }
 
         protected void fileListView_ItemActivate(object sender, EventArgs eventArgs)
         {
@@ -346,24 +354,24 @@ namespace Ketarin.Forms
                 fileName.Text = "";
                 foreach (ListViewItem item in fileListView.SelectedItems)
                 {
-		    if (!Directory.Exists(Path.Combine(m_Directory, item.Text)))
-		    {
-			if (fileName.Text.Length > 0)
-			{
-			    fileName.Text += ' ';
-			}
-			fileName.Text += '\"' + item.Text + '\"';
-		    }
-		    else
-			fileName.Text = "";
+                    if (!Directory.Exists(Path.Combine(m_Directory, item.Text)))
+                    {
+                        if (fileName.Text.Length > 0)
+                        {
+                            fileName.Text += ' ';
+                        }
+                        fileName.Text += '\"' + item.Text + '\"';
+                    }
+                    else
+                        fileName.Text = "";
                 }
             }
             else if (eventArgs.IsSelected)
             {
-		if (!Directory.Exists(Path.Combine(m_Directory, eventArgs.Item.Text)))
-		    fileName.Text = eventArgs.Item.Text;
-		else
-		    fileName.Text = "";
+                if (!Directory.Exists(Path.Combine(m_Directory, eventArgs.Item.Text)))
+                    fileName.Text = eventArgs.Item.Text;
+                else
+                    fileName.Text = "";
             }
             else
             {
@@ -373,50 +381,50 @@ namespace Ketarin.Forms
 
         protected void ok_Click(object sender, System.EventArgs eventArgs)
         {
-	    this.saveColumnWidths();
-	    if (fileName.Text.Length > 0)
-	    {
-		string checkFile = getFullPathName();
-		if (m_CheckPathExists)
-		{
-		    if (!Directory.Exists(Path.GetDirectoryName(checkFile)))
-		    {
-			MessageBox.Show(this, "The directory of the file must exist!", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			return;
-		    }
-		}
-		if (m_CheckFileExists)
-		{
-		    if (!File.Exists(checkFile))
-		    {
-			MessageBox.Show(this, "The file must exist!", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-			return;
-		    }
-		}
-		m_FileName = checkFile;
-		this.DialogResult = DialogResult.OK;
-		this.Close();
-		this.Dispose();
-		return;
-	    }
-	    if (type == Type.Open)
-		MessageBox.Show(this, "You must select a file to open.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-	    else
-		MessageBox.Show(this, "You must specify a file to save.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            this.saveColumnWidths();
+            if (fileName.Text.Length > 0)
+            {
+                string checkFile = getFullPathName();
+                if (m_CheckPathExists)
+                {
+                    if (!Directory.Exists(Path.GetDirectoryName(checkFile)))
+                    {
+                        MessageBox.Show(this, "The directory of the file must exist!", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+                if (m_CheckFileExists)
+                {
+                    if (!File.Exists(checkFile))
+                    {
+                        MessageBox.Show(this, "The file must exist!", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+                m_FileName = checkFile;
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+                this.Dispose();
+                return;
+            }
+            if (type == Type.Open)
+                MessageBox.Show(this, "You must select a file to open.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else
+                MessageBox.Show(this, "You must specify a file to save.", Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         protected void cancel_Click(object sender, System.EventArgs eventArgs)
         {
-	    this.saveColumnWidths();
-	    this.DialogResult = DialogResult.Cancel;
+            this.saveColumnWidths();
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
-	    this.Dispose();
+            this.Dispose();
         }
 
         protected void viewLargeIcon_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.LargeIcon;
-	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
+            Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = true;
             this.viewSmallIcon.Checked = false;
             this.viewList.Checked = false;
@@ -426,7 +434,7 @@ namespace Ketarin.Forms
         protected void viewSmallIcon_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.SmallIcon;
-	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
+            Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = false;
             this.viewSmallIcon.Checked = true;
             this.viewList.Checked = false;
@@ -436,7 +444,7 @@ namespace Ketarin.Forms
         protected void viewList_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.List;
-	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
+            Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = false;
             this.viewSmallIcon.Checked = false;
             this.viewList.Checked = true;
@@ -446,7 +454,7 @@ namespace Ketarin.Forms
         protected void viewDetails_Click(object sender, System.EventArgs eventArgs)
         {
             this.fileListView.View = View.Details;
-	    Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
+            Registry.SetValue(KFileDialogKey, ViewTypeValue, (int)this.fileListView.View);
             this.viewLargeIcon.Checked = false;
             this.viewSmallIcon.Checked = false;
             this.viewList.Checked = false;
@@ -463,12 +471,12 @@ namespace Ketarin.Forms
         }
 
         protected void fileName_KeyDown(object sender, KeyEventArgs eventArgs)
-	{
-	    if (eventArgs.KeyCode == Keys.Enter)
-	    {
-		this.ok_Click(null, null);
-	    }
-	}
+        {
+            if (eventArgs.KeyCode == Keys.Enter)
+            {
+                this.ok_Click(null, null);
+            }
+        }
 
         protected void fileName_SelectedIndexChanged(object sender, System.EventArgs eventArgs)
         {
@@ -489,51 +497,51 @@ namespace Ketarin.Forms
             }
         }
 
-	private string appendExtension(string pathName, string filter)
-	{
-	    string[] extensions = filter.Split(',');
-	    bool extensionFound = false;
-	    foreach (string extension in extensions)
-	    {
-		string[] tmp = extension.Split('.');
-		if ((tmp.Length > 1)
-		    && (PathEx.IsExtension(pathName, tmp[tmp.Length - 1])))
-		{
-		    extensionFound = true;
-		    break;
-		}
-		else if (PathEx.IsExtension(pathName, extension))
-		{
-		    extensionFound = true;
-		    break;
-		}
-	    }
-	    if (!extensionFound)
-	    {
-		string[] tmp = extensions[0].Split('.');
-		if (tmp.Length > 1)
-		    return pathName + '.' + tmp[tmp.Length - 1];
-		return pathName + '.' +  extensions[0];
-	    }
-	    return pathName;
-	}
+        private string appendExtension(string pathName, string filter)
+        {
+            string[] extensions = filter.Split(',');
+            bool extensionFound = false;
+            foreach (string extension in extensions)
+            {
+                string[] tmp = extension.Split('.');
+                if ((tmp.Length > 1)
+                    && (PathEx.IsExtension(pathName, tmp[tmp.Length - 1])))
+                {
+                    extensionFound = true;
+                    break;
+                }
+                else if (PathEx.IsExtension(pathName, extension))
+                {
+                    extensionFound = true;
+                    break;
+                }
+            }
+            if (!extensionFound)
+            {
+                string[] tmp = extensions[0].Split('.');
+                if (tmp.Length > 1)
+                    return pathName + '.' + tmp[tmp.Length - 1];
+                return pathName + '.' +  extensions[0];
+            }
+            return pathName;
+        }
 
-	private string getFullPathName()
-	{
-	    if (fileName.Text.Length == 0)
-		return "";
-	    if (fileListView.MultiSelect)
-		return fileName.Text;
+        private string getFullPathName()
+        {
+            if (fileName.Text.Length == 0)
+                return "";
+            if (fileListView.MultiSelect)
+                return fileName.Text;
 
-	    currentFilter = ((KeyValuePair<string, string>)extensions.SelectedItem).Value;
-	    string pathName = fileName.Text;
-	    pathName = appendExtension(pathName, currentFilter);
-	    if (pathName.StartsWith(Path.DirectorySeparatorChar.ToString()))
-	    {
-		return pathName;
-	    }
-	    return Path.Combine(m_Directory, pathName);
-	}
+            currentFilter = ((KeyValuePair<string, string>)extensions.SelectedItem).Value;
+            string pathName = fileName.Text;
+            pathName = appendExtension(pathName, currentFilter);
+            if (pathName.StartsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                return pathName;
+            }
+            return Path.Combine(m_Directory, pathName);
+        }
 
         private void saveColumnWidths()
         {
@@ -559,108 +567,108 @@ namespace Ketarin.Forms
                 (int) Registry.GetValue(KFileDialogKey, ColumnWidthValue+"4", -2);
         }
 
-	// Returns the human-readable file size for an arbitrary, 64-bit file
+        // Returns the human-readable file size for an arbitrary, 64-bit file
         // size.  The default format is "0.# XB", e.g. "42.3 KB" or "1,430.4 MB"
-	// Updated by TOM so that it won't return 1.5KB, but 1,500KB
+        // Updated by TOM so that it won't return 1.5KB, but 1,500KB
         // From https://www.somacon.com/p576.php
-	public string GetBytesReadable(long i)
-	{
-	    // Get absolute value
-	    long absolute_i = (i < 0 ? -i : i);
-	    // Determine the suffix and readable value
-	    string suffix;
-	    double readable;
-	    if (absolute_i >= 0x1000000000000000) // Exabyte
-	    {
-		suffix = "EB";
-		readable = (i >> 50);
-	    }
-	    else if (absolute_i >= 0x28000000000000) // Petabyte
-	    {
-		suffix = "PB";
-		readable = (i >> 40);
-	    }
-	    else if (absolute_i >= 0xA0000000000) // Terabyte
-	    {
-		suffix = "TB";
-		readable = (i >> 30);
-	    }
-	    else if (absolute_i >= 0x280000000) // Gigabyte
-	    {
-		suffix = "GB";
-		readable = (i >> 20);
-	    }
-	    else if (absolute_i >= 0xA00000) // Megabyte
-	    {
-		suffix = "MB";
-		readable = (i >> 10);
-	    }
-	    else if (absolute_i >= 0x2800) // Kilobyte
-	    {
-		suffix = "KB";
-		readable = i;
-	    }
-	    else
-	    {
-		return i.ToString("0 B"); // Byte
-	    }
-	    // Divide by 1024 to get fractional value
-	    readable = (readable / 1024);
-	    // Return formatted number with suffix
-	    return readable.ToString("0.# ") + suffix;
-	}
+        public string GetBytesReadable(long i)
+        {
+            // Get absolute value
+            long absolute_i = (i < 0 ? -i : i);
+            // Determine the suffix and readable value
+            string suffix;
+            double readable;
+            if (absolute_i >= 0x1000000000000000) // Exabyte
+            {
+                suffix = "EB";
+                readable = (i >> 50);
+            }
+            else if (absolute_i >= 0x28000000000000) // Petabyte
+            {
+                suffix = "PB";
+                readable = (i >> 40);
+            }
+            else if (absolute_i >= 0xA0000000000) // Terabyte
+            {
+                suffix = "TB";
+                readable = (i >> 30);
+            }
+            else if (absolute_i >= 0x280000000) // Gigabyte
+            {
+                suffix = "GB";
+                readable = (i >> 20);
+            }
+            else if (absolute_i >= 0xA00000) // Megabyte
+            {
+                suffix = "MB";
+                readable = (i >> 10);
+            }
+            else if (absolute_i >= 0x2800) // Kilobyte
+            {
+                suffix = "KB";
+                readable = i;
+            }
+            else
+            {
+                return i.ToString("0 B"); // Byte
+            }
+            // Divide by 1024 to get fractional value
+            readable = (readable / 1024);
+            // Return formatted number with suffix
+            return readable.ToString("0.# ") + suffix;
+        }
 
-	class ListViewItemComparer : System.Collections.IComparer
-	{
-	    private int column;
-	    private bool ascending;
-	    public ListViewItemComparer()
-	    {
-		column = 0;
-	    }
+        class ListViewItemComparer : System.Collections.IComparer
+        {
+            private int column;
+            private bool ascending;
+            public ListViewItemComparer()
+            {
+                column = 0;
+            }
 
-	    public ListViewItemComparer(int column, bool ascending)
-	    {
-		this.column = column;
-		this.ascending = ascending;
-	    }
+            public ListViewItemComparer(int column, bool ascending)
+            {
+                this.column = column;
+                this.ascending = ascending;
+            }
 
-	    public int Compare(object x, object y)
-	    {
-		ListViewItem lviX = null;
-		ListViewItem lviY = null;
-		if (ascending)
-		{
-		    lviX = (ListViewItem)x;
-		    lviY = (ListViewItem)y;
-		}
-		else
-		{
-		    lviX = (ListViewItem)y;
-		    lviY = (ListViewItem)x;
-		}
-		int comp = 0;
-		// Always sort by Type (column 2) first, unless that's what
-		// we're supposed to sort by...
-		if (column != 2)
-		{
-		    comp = String.Compare(lviX.SubItems[2].Text,
-			lviY.SubItems[2].Text);
-		}
-		// If comp is 0, they're the same type, so proceed to requested
-		// sort order...
-		if (comp == 0)
-		{
-		    comp = String.Compare(lviX.SubItems[column].Text,
-			lviY.SubItems[column].Text);
-		    if (comp == 0)
-		    {
-			comp = String.Compare(lviX.SubItems[0].Text,
-			    lviY.SubItems[0].Text);
-		    }
-		}
-		return comp;
-	    }
-	}
+            public int Compare(object x, object y)
+            {
+                ListViewItem lviX = null;
+                ListViewItem lviY = null;
+                if (ascending)
+                {
+                    lviX = (ListViewItem)x;
+                    lviY = (ListViewItem)y;
+                }
+                else
+                {
+                    lviX = (ListViewItem)y;
+                    lviY = (ListViewItem)x;
+                }
+                int comp = 0;
+                // Always sort by Type (column 2) first, unless that's what
+                // we're supposed to sort by...
+                if (column != 2)
+                {
+                    comp = String.Compare(lviX.SubItems[2].Text,
+                        lviY.SubItems[2].Text);
+                }
+                // If comp is 0, they're the same type, so proceed to requested
+                // sort order...
+                if (comp == 0)
+                {
+                    comp = String.Compare(lviX.SubItems[column].Text,
+                        lviY.SubItems[column].Text);
+                    if (comp == 0)
+                    {
+                        comp = String.Compare(lviX.SubItems[0].Text,
+                            lviY.SubItems[0].Text);
+                    }
+                }
+                return comp;
+            }
+        }
     }
 }
