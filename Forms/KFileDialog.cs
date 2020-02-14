@@ -42,11 +42,11 @@ namespace Ketarin.Forms
             inLoadFileList = false;
             InitializeComponent();
             fileListView.SmallImageList = new ImageList();
-	    fileListView.SmallImageList.ImageSize = new Size(16,16);
+            fileListView.SmallImageList.ImageSize = new Size(16,16);
             fileListView.SmallImageList.Images.Add(global::Ketarin.Properties.Resources.SmallFolder);
             fileListView.SmallImageList.Images.Add(global::Ketarin.Properties.Resources.Document);
             fileListView.LargeImageList = new ImageList();
-	    fileListView.LargeImageList.ImageSize = new Size(32,32);
+            fileListView.LargeImageList.ImageSize = new Size(32,32);
             fileListView.LargeImageList.Images.Add(global::Ketarin.Properties.Resources.Folder);
             fileListView.LargeImageList.Images.Add(global::Ketarin.Properties.Resources.Document);
             fileListView.Columns.Add("Name", -2, HorizontalAlignment.Left);
@@ -191,9 +191,18 @@ namespace Ketarin.Forms
             Passwd passwdp = null;
             Syscall.getpwuid_r(Syscall.getuid(), passwd, out passwdp);
             items.Add(passwd.pw_dir);
-            // TODO: Get mounted file systems -- unfortunately, there's no
-            // standard interface for this. If available, use getfsstat() or
-            // getmntinfo(), on Linux, use /proc/self/mountinfo
+            string[] drives = Directory.GetLogicalDrives();
+            foreach (string drive in drives)
+            {
+                DriveInfo driveInfo = new DriveInfo(drive);
+                if (!drive.Equals("/")
+                    && driveInfo.DriveType != DriveType.Unknown)
+                {
+                    items.Add(drive);
+                }
+                // TODO: Use PathEx.IsRemovableSource() to determine which icon
+                // to use, once we start adding icons
+            }
             mountList.Items.AddRange(items.ToArray());
             mountList.SetSelected(0, true);
         }
