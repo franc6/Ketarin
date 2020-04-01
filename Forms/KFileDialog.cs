@@ -19,6 +19,9 @@ namespace Ketarin.Forms
         private string KFileDialogKey = "HKEY_CURRENT_USER\\Software\\KFileDialog";
         private string ViewTypeValue = "ViewType";
         private string ColumnWidthValue = "ColumnWidth";
+        private string DialogHeightValue = "DialogHeight";
+        private string DialogWidthValue = "DialogWidth";
+        private string SplitterDistanceValue = "SplitterDistance";
         private bool m_CheckFileExists;
         private bool m_CheckPathExists;
         private string m_Directory;
@@ -71,7 +74,7 @@ namespace Ketarin.Forms
                     this.viewDetails_Click(null, null);
                     break;
             }
-            setColumnWidths();
+            setDialogSizes();
             currentFilter = null;
             if (type == Type.Open)
             {
@@ -390,7 +393,7 @@ namespace Ketarin.Forms
 
         protected void ok_Click(object sender, System.EventArgs eventArgs)
         {
-            this.saveColumnWidths();
+            this.saveDialogSizes();
             if (fileName.Text.Length > 0)
             {
                 string checkFile = getFullPathName();
@@ -424,7 +427,7 @@ namespace Ketarin.Forms
 
         protected void cancel_Click(object sender, System.EventArgs eventArgs)
         {
-            this.saveColumnWidths();
+            this.saveDialogSizes();
             this.DialogResult = DialogResult.Cancel;
             this.Close();
             this.Dispose();
@@ -552,8 +555,8 @@ namespace Ketarin.Forms
             return Path.Combine(m_Directory, pathName);
         }
 
-        private void saveColumnWidths()
-        {
+	private void saveDialogSizes()
+	{
             Registry.SetValue(KFileDialogKey, ColumnWidthValue+"1",
                 fileListView.Columns[0].Width);
             Registry.SetValue(KFileDialogKey, ColumnWidthValue+"2",
@@ -562,10 +565,21 @@ namespace Ketarin.Forms
                 fileListView.Columns[2].Width);
             Registry.SetValue(KFileDialogKey, ColumnWidthValue+"4",
                 fileListView.Columns[3].Width);
+            Registry.SetValue(KFileDialogKey, DialogHeightValue,
+		ClientSize.Height);
+            Registry.SetValue(KFileDialogKey, DialogWidthValue,
+		ClientSize.Width);
+            Registry.SetValue(KFileDialogKey, SplitterDistanceValue,
+		splitContainer.SplitterDistance);
         }
 
-        private void setColumnWidths()
+        private void setDialogSizes()
         {
+            ClientSize = new System.Drawing.Size(
+                (int) Registry.GetValue(KFileDialogKey, DialogWidthValue, 526),
+                (int) Registry.GetValue(KFileDialogKey, DialogHeightValue, 348));
+            splitContainer.SplitterDistance =
+                (int) Registry.GetValue(KFileDialogKey, SplitterDistanceValue, 104);
             fileListView.Columns[0].Width =
                 (int) Registry.GetValue(KFileDialogKey, ColumnWidthValue+"1", -2);
             fileListView.Columns[1].Width =
