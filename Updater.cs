@@ -793,6 +793,7 @@ namespace Ketarin
                     LogDialog.Log(job, "Pre-update command returned '3', external download");
                     job.LastUpdated = DateTime.Now;
                     job.Save();
+                    job.ExecutePostUpdateCommands();
                     return Status.UpdateSuccessful;
                 }
 
@@ -872,7 +873,7 @@ namespace Ketarin
                 // If each version has a different file name (version number),
                 // we might only want to keep one of them. Also, we might
                 // want to free some space on the target location.
-                if (job.DeletePreviousFile)
+                if (job.DeletePreviousFile && job.NumberOfRevisions <= 1)
                 {
                     PathEx.TryDeleteFiles(job.PreviousLocation);
                 }
@@ -920,6 +921,9 @@ namespace Ketarin
                 {
                     // Before copying, we might have to create the directory
                     Directory.CreateDirectory(Path.GetDirectoryName(targetFileName));
+
+                    // Take care of creating backups before overwriting the file if desired.
+                    job.BackupRevisions(targetFileName);
 
                     // Copying might fail if variables have been replaced with bad values.
                     // However, we cannot rely on functions to clean up the path, since they
