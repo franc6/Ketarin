@@ -473,6 +473,11 @@ namespace Ketarin.Forms
             this.viewDetails.Checked = true;
         }
 
+        protected void refresh_Click(object sender, System.EventArgs eventArgs)
+        {
+            loadFileList();
+        }
+
         protected void lookIn_SelectedIndexChanged(object sender, System.EventArgs eventArgs)
         {
             if (!inLoadFileList)
