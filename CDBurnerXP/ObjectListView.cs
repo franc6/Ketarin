@@ -5,6 +5,7 @@
  * Date: 9/10/2006 11:15 AM
  *
  * Change log:
+ * 2020-09-28  TJF  - Updated with fixes from newer versions of ObjectListView.  In particular, updated Freeze/Unfreeze to call BeginUpdate and EndUpdate; added try/finally around BuildGroups with BeginUpdate and EndUpdate calls; and changed to add items one at a time to groups instead of calling AddRange.  Other changes are fairly minor in terms of results.  However, the Freeze/Unfreeze behavior allow removal of #if MONO code, and adding items one at a time fixes a bug on Mono which causes frequent crashes, especially with sorting.
  * 2018-10-04  TJF  - Modifications for MONO builds
  * 2008-07-23  JPP  - Consistently use copy-on-write semantics with Add/RemoveObject methods
  * 2008-07-10  JPP  - Enable validation on cell editors through a CellEditValidating event.
@@ -1485,7 +1486,12 @@ namespace CDBurnerXP.Controls
         /// </summary>
         public void BuildGroups()
         {
-            this.BuildGroups(this.lastSortColumn);
+            this.BeginUpdate();
+            try {
+                this.BuildGroups(this.lastSortColumn);
+            } finally {
+                this.EndUpdate();
+            }
         }
 
         /// <summary>
@@ -1497,6 +1503,10 @@ namespace CDBurnerXP.Controls
         /// <param name="column">The column whose values should be used for sorting.</param>
         virtual public void BuildGroups(OLVColumn column)
         {
+            // Checks from newer version of ObjectListView
+            if (this.GetItemCount() == 0 || this.Columns.Count == 0)
+                return;
+
             if (column == null)
                 column = this.GetColumn(0);
 
@@ -1528,10 +1538,23 @@ namespace CDBurnerXP.Controls
                 map[key].Add(olvi);
             }
 
+            string fmt = groupByColumn.GroupWithItemCountFormatOrDefault;
+            string singularFmt = groupByColumn.GroupWithItemCountSingularFormatOrDefault;
+
             // Make a list of the required groups
             List<ListViewGroup> groups = new List<ListViewGroup>();
             foreach (object key in map.Keys) {
-                ListViewGroup lvg = new ListViewGroup(groupByColumn.ConvertGroupKeyToTitle(key));
+                string title = groupByColumn.ConvertGroupKeyToTitle(key);
+                if (this.ShowItemCountOnGroups) {
+                    int count = map[key].Count;
+                    string format = (count == 1 ? singularFmt : fmt);
+                    try {
+                        title = String.Format(format, title, count);
+                    } catch (FormatException) {
+                        title = "Invalid group format: " + format;
+                    }
+                }
+                ListViewGroup lvg = new ListViewGroup(title);
                 lvg.Tag = key;
                 groups.Add(lvg);
             }
@@ -1544,20 +1567,23 @@ namespace CDBurnerXP.Controls
             // - the header must be calculate before the group is added to the list view,
             //   otherwise changing the header causes a nasty redraw (even in the middle of a BeginUpdate...EndUpdate pair)
             // - the group must be added before it is given items, otherwise an exception is thrown (is this documented?)
-            string fmt = groupByColumn.GroupWithItemCountFormatOrDefault;
-            string singularFmt = groupByColumn.GroupWithItemCountSingularFormatOrDefault;
             ColumnComparer itemSorter = new ColumnComparer((this.SortGroupItemsByPrimaryColumn ? this.GetColumn(0) : column),
                                                            this.lastSortOrder, this.SecondarySortColumn, this.SecondarySortOrder);
             foreach (ListViewGroup group in groups) {
-                if (this.ShowItemCountOnGroups) {
-                    int count = map[group.Tag].Count;
-                    group.Header = String.Format((count == 1 ? singularFmt : fmt), group.Header, count);
-                }
                 this.Groups.Add(group);
                 // If there is no sort order, don't sort since the sort isn't stable
                 if (this.lastSortOrder != SortOrder.None)
                     map[group.Tag].Sort(itemSorter);
-                group.Items.AddRange(map[group.Tag].ToArray());
+                // Don't use AddRange() since this sometimes crashes on Mono.
+                // Adding each item individually seems to work just fine,
+                // though.  Newer code from JPP tries to cast list as
+                // List<OLVListItem> and if that fails, adds items one at a
+                // time, and otherwise adds them all.  On Mono, using AddRange
+                // nearly always fails.
+                foreach (OLVListItem item in map[group.Tag]) {
+                    group.Items.Add(item);
+                }
+                //group.Items.AddRange(map[group.Tag].ToArray());
             }
         }
 
@@ -1601,18 +1627,7 @@ namespace CDBurnerXP.Controls
             int previousTopIndex = this.TopItemIndex;
 
             this.Freeze();
-#if MONO
-            // Calling this.Clear() will cause re-layout, which on Mono might
-            // throw InvalidOperationException.  This is perfectly fine here,
-            // so just catch it and continue.  The layout code will get called
-            // again anyway.
-            try {
-#endif
             this.Clear();
-#if MONO
-            }
-            catch (InvalidOperationException){}
-#endif
             List<OLVColumn> cols = this.GetFilteredColumns(view);
             this.Columns.AddRange(cols.ToArray());
             if (view == View.Details) {
@@ -1629,7 +1644,7 @@ namespace CDBurnerXP.Controls
                 }
                 this.ShowSortIndicator();
             }
-            this.BuildList();
+            this.BuildList(true);
             this.Unfreeze();
 
             // Restore the state
@@ -1872,8 +1887,11 @@ namespace CDBurnerXP.Controls
                 this.lastSortOrder = SortOrder.Ascending;
 
             this.BeginUpdate();
-            this.Sort(e.Column);
-            this.EndUpdate();
+            try {
+                this.Sort(e.Column);
+            } finally {
+                this.EndUpdate();
+            }
         }
 
         /// <summary>
@@ -2862,6 +2880,9 @@ namespace CDBurnerXP.Controls
         /// <remarks>Freeze()/Unfreeze() calls nest correctly</remarks>
         public void Freeze()
         {
+            if (freezeCount == 0)
+                DoFreeze();
+
             freezeCount++;
         }
 
@@ -2881,11 +2902,20 @@ namespace CDBurnerXP.Controls
         }
 
         /// <summary>
+        /// Do the actual work required when the listview is frozen
+        /// </summary>
+        virtual protected void DoFreeze() {
+            this.BeginUpdate();
+        }
+
+        /// <summary>
         /// Do the actual work required when the listview is unfrozen
         /// </summary>
         virtual protected void DoUnfreeze()
         {
-            BuildList();
+            this.EndUpdate();
+            this.ResizeFreeSpaceFillingColumns();
+            this.BuildList();
         }
 
         #endregion
