@@ -40,6 +40,7 @@ namespace Ketarin
         private static PropertyInfo[] applicationJobProperties;
         private string cachedCurrentLocation;
         private string previousLocation = string.Empty;
+        private int m_NumberOfRevisions = 1;
 
         /// <summary>
         /// Cached list of public properties of the type ApplicationJob.
@@ -151,7 +152,22 @@ namespace Ketarin
         /// Gets or sets the number of revisions of a file that should be stored.
         /// If > 1, revisions will be saved as FileName.1.ext in the same location.
         /// </summary>
-        public int NumberOfRevisions { get; set; }
+        public int NumberOfRevisions
+        {
+            /* Make sure we stick to the range of 1 - 100! */
+            get
+            {
+                if (m_NumberOfRevisions > 100)
+                    m_NumberOfRevisions = 100;
+                if (m_NumberOfRevisions < 1)
+                    m_NumberOfRevisions = 1;
+                return m_NumberOfRevisions;
+            }
+            set
+            {
+                m_NumberOfRevisions = (value <= 100 && value > 1) ? value : 1;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the last write time of the file which
