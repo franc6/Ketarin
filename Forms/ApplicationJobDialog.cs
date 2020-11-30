@@ -356,6 +356,7 @@ namespace Ketarin.Forms
 
         private void bOK_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.OK;
             // Check that name is not empty
             if (string.IsNullOrEmpty(this.txtApplicationName.Text))
             {
