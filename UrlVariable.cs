@@ -721,7 +721,7 @@ namespace Ketarin
                     }
 
                 case "replace":
-                    if (parts.Length >= 3)
+                    if ((parts.Length >= 3) && (parts[1].Length > 0))
                     {
                         return content.Replace(parts[1], parts[2]);
                     }
