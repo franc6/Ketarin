@@ -34,11 +34,19 @@ namespace Ketarin.Forms
         {
             this.lblDesc = new System.Windows.Forms.Label();
             this.bClose = new System.Windows.Forms.Button();
+#if MONO
+            this.olvErrors = new System.Windows.Forms.ListView();
+            this.colAppName = new System.Windows.Forms.ColumnHeader();
+            this.colError = new System.Windows.Forms.ColumnHeader();
+#else
             this.olvErrors = new CDBurnerXP.Controls.FastObjectListView();
             this.colAppName = new CDBurnerXP.Controls.OLVColumn();
             this.colError = new CDBurnerXP.Controls.OLVColumn();
+#endif
             this.bCopyToClipboard = new System.Windows.Forms.Button();
+#if !MONO
             ((System.ComponentModel.ISupportInitialize)(this.olvErrors)).BeginInit();
+#endif
             this.SuspendLayout();
             // 
             // lblDesc
@@ -63,6 +71,23 @@ namespace Ketarin.Forms
             // 
             // olvErrors
             // 
+#if MONO
+            this.olvErrors.Columns.Add(this.colAppName);
+            this.olvErrors.Columns.Add(this.colError);
+            this.olvErrors.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.olvErrors.FullRowSelect = true;
+            this.olvErrors.HideSelection = false;
+            this.olvErrors.Location = new System.Drawing.Point(12, 26);
+            this.olvErrors.ShowGroups = false;
+            this.olvErrors.ShowItemToolTips = true;
+            this.olvErrors.Size = new System.Drawing.Size(518, 178);
+            this.olvErrors.Sorting = System.Windows.Forms.SortOrder.Ascending;
+            this.olvErrors.TabIndex = 1;
+            this.olvErrors.UseCompatibleStateImageBehavior = false;
+            this.olvErrors.View = System.Windows.Forms.View.Details;
+#else
             this.olvErrors.AllColumns.Add(this.colAppName);
             this.olvErrors.AllColumns.Add(this.colError);
             this.olvErrors.AlternateRowBackColor = System.Drawing.Color.Empty;
@@ -90,19 +115,30 @@ namespace Ketarin.Forms
             this.olvErrors.UseCompatibleStateImageBehavior = false;
             this.olvErrors.View = System.Windows.Forms.View.Details;
             this.olvErrors.VirtualMode = true;
+#endif
             // 
             // colAppName
             // 
+#if MONO
+            this.colAppName.Text = "Application";
+            this.colAppName.Width = 98;
+#else
             this.colAppName.AspectName = "ApplicationJob.Name";
             this.colAppName.Text = "Application";
             this.colAppName.Width = 98;
+#endif
             // 
             // colError
             // 
+#if MONO
+            this.colError.Text = "Message";
+            this.colError.Width = 120;
+#else
             this.colError.AspectName = "Message";
             this.colError.FillsFreeSpace = true;
             this.colError.Text = "Error";
             this.colError.Width = 120;
+#endif
             // 
             // bCopyToClipboard
             // 
@@ -131,7 +167,9 @@ namespace Ketarin.Forms
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Errors";
+#if !MONO
             ((System.ComponentModel.ISupportInitialize)(this.olvErrors)).EndInit();
+#endif
             this.ResumeLayout(false);
 
         }
@@ -140,9 +178,15 @@ namespace Ketarin.Forms
 
         private Label lblDesc;
         private Button bClose;
+#if MONO
+        private System.Windows.Forms.ListView olvErrors;
+        private System.Windows.Forms.ColumnHeader colAppName;
+        private System.Windows.Forms.ColumnHeader colError;
+#else
         private FastObjectListView olvErrors;
         private OLVColumn colAppName;
         private OLVColumn colError;
+#endif
         private Button bCopyToClipboard;
     }
 }

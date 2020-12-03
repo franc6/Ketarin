@@ -37,8 +37,19 @@ namespace Ketarin.Forms
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
-
+#if MONO
+	    // Quick fix for width; setting Width to -1 on mono doesn't size it
+	    // to content.  TODO: Fix this properly, tracking the max width in
+	    // the foreach loop, and set this.colError.Width to that at the end
+	    // of the loop.
+            this.colError.Width = this.olvErrors.Width - this.colAppName.Width - 4;
+            foreach (ApplicationJobError error in m_Errors) {
+                System.Windows.Forms.ListViewItem item = new System.Windows.Forms.ListViewItem(new String[]{error.ApplicationJob.Name, error.Message}, 0);
+                olvErrors.Items.Add(item);
+            }
+#else
             olvErrors.SetObjects(m_Errors);
+#endif
         }
 
         private void bCopyToClipboard_Click(object sender, EventArgs e)
